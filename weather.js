@@ -1,6 +1,5 @@
 $(document).ready(function () {
 
-  //http://ip-api.com/json
   function convertDegressToCompass(deg) {
     console.log("Degrees: " + deg);
     var cardinal_direction=["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
@@ -29,17 +28,16 @@ $(document).ready(function () {
   /* Grabbed from getWeather(), but can be modified when clicking on the temperature to convert from F to C, and vice versa. */
   var temperature;
 
-  function getWeather(lat_coord, long_coord) {
+  function getWeather(lat_coord, long_coord, city, region, countryCode) {
     console.log("Latitude: " + lat_coord);
     console.log("Longitude: " + long_coord);
+
+
 
     var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat_coord + "&lon=" + long_coord + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
     console.log("Api: " + api_call);
     $.getJSON(api_call, function(data) {
-      var city = data.name;
-      console.log("City: " + data.name);
-      $("#section_city").html("<h3>" + city + "</h3>");
-
+      $("#section_city").html("<h3>" + city + ", " + region + " " + countryCode + "</h3>");
       $("#current_time").html("<h4>" + getDateTime() + "</h4>");
 
       var weatherDesc = data.weather[0].description;
@@ -74,14 +72,17 @@ $(document).ready(function () {
     });
   }
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var latitude = position.coords.latitude;
-      var longitude = position.coords.longitude;
-      console.log("lat: " + latitude);
-      getWeather(latitude, longitude);
-    });
-  }
+
+  $.getJSON("http://ip-api.com/json", function(data) {
+    console.log("Data lat: " + data.lat);
+    console.log("Data lon: " + data.lon);
+    getWeather(data.lat, data.lon, data.city, data.region, data.countryCode);
+  });
+
+
+  /*{"as":"AS7922 Comcast Cable Communications, Inc.","city":"Pleasanton","country":"United States","countryCode":"US","isp":"Comcast Cable",
+  "lat":37.6704,"lon":-121.9374,"org":"Comcast Cable","query":"50.184.197.151","region":"CA","regionName":"California","status":"success","timezone":"America/Los_Angeles","zip":"94588"}*/
+
 
   var temperature_measurement = "F";
   $("#section_temperature").click(function() {
