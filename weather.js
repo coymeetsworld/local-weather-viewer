@@ -25,46 +25,76 @@ $(document).ready(function () {
     return days[d.getDay()] + " " + hours + ":" + minutes + " " + cycle;
   }
 
+
+  function convertUTCDateToLocalDate(date) {
+    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      console.log("DATE: " + date);
+      var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+      var offset = date.getTimezoneOffset() / 60;
+      var hours = date.getHours();
+      newDate.setHours(hours - offset);
+      console.log(monthNames[newDate.getMonth()] + " " + newDate.getDate());
+      return monthNames[newDate.getMonth()] + " " + newDate.getDate();
+  }
+
+
+
   /* Grabbed from getWeather(), but can be modified when clicking on the temperature to convert from F to C, and vice versa. */
   var temperature;
+
+  //NEED a way to get current temperature
 
   function getWeather(lat_coord, long_coord, city, region, countryCode) {
     console.log("Latitude: " + lat_coord);
     console.log("Longitude: " + long_coord);
-
-
+    $("#section_city").html("<h3>" + city + ", " + region + " " + countryCode + "</h3>");
 
     var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat_coord + "&lon=" + long_coord + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
+    api_call = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat_coord + "&lon=" + long_coord + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
+    api_call = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + lat_coord + "&lon=" + long_coord + "&cnt=10&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
+
     console.log("Api: " + api_call);
     $.getJSON(api_call, function(data) {
-      $("#section_city").html("<h3>" + city + ", " + region + " " + countryCode + "</h3>");
-      $("#current_time").html("<h4>" + getDateTime() + "</h4>");
 
-      var weatherDesc = data.weather[0].description;
-      //$("#section_weather_description").html("<h4>" + weatherDesc + "</h4>");
-
-      var icon = data.weather[0].icon;
-      var icon_url = "http://openweathermap.org/img/w/" + icon + ".png";
-      console.log("icon_url: " + icon_url);
-      //$("#section_weather_icon").html("<img src=\"" + icon_url + "\">");
-      $("#section_weather_description").html("<img src=\"" + icon_url +"\">" + " " + weatherDesc);
+      console.log("Data");
+      console.log(data);
+      console.log("---------------------------------");
 
 
+      var weather_table = $('<table class="weather_table">');
 
-      temperature = data.main.temp;
-      console.log("Temperature (F): " + temperature);
-      $("#section_temperature").html("<p>" + temperature + " F</p>");
+      var weatherObj, date, wind_cardinal_direction;
+      var weather_row, cell_date;
+      for (var i = 0; i < 10; i++) {
+        weatherObj = data.list[i];
 
-      var wind_speed = data.wind.speed;
-      console.log("Wind speed (MPH): " + wind_speed);
+        weather_row = $('<tr>');
+        cell_date = $('<td>');
 
-      console.log("Wind degrees: " + data.wind.deg);
-      var wind_cardinal_direction = convertDegressToCompass(data.wind.deg);
-      console.log("Wind direction: " + wind_cardinal_direction);
+        console.log("Day: " + i);
+        console.log(weatherObj);
+        date = convertUTCDateToLocalDate(new Date(weatherObj.dt*1000));
+        console.log("Date: " + date);
+        console.log("Date Locale: " + date.toLocaleString());
+        cell_date.html(date);
+        cell_date.appendTo(weather_row);
 
-      $("#section_weather_wind").html("<p>" + wind_speed + " " + wind_cardinal_direction + "</p>");
 
+        //weatherObj.temp.max;
+        //weatherObj.temp.low;
+        //weatherObj.weather[0].description;
+        var iconClass = "wi-owm-" + weatherObj.weather[0].id;
+        wind_cardinal_direction = convertDegressToCompass(weatherObj.deg);
+        var wind_cardinal_direction = convertDegressToCompass(weatherObj.deg);
+        console.log("Wind direction: " + wind_cardinal_direction);
+        //weatherObj.speed; //in MPH
+        //weatherObj.humidity;
 
+        $(weather_row).appendTo(weather_table);
+      }
+      $(weather_table).prependTo("#new_weather_summary");
+  
 
     }).fail(function (jqXHR, textStatus, errorThrown) {
       console.log("Error: " + errorThrown);
@@ -78,10 +108,6 @@ $(document).ready(function () {
     console.log("Data lon: " + data.lon);
     getWeather(data.lat, data.lon, data.city, data.region, data.countryCode);
   });
-
-
-  /*{"as":"AS7922 Comcast Cable Communications, Inc.","city":"Pleasanton","country":"United States","countryCode":"US","isp":"Comcast Cable",
-  "lat":37.6704,"lon":-121.9374,"org":"Comcast Cable","query":"50.184.197.151","region":"CA","regionName":"California","status":"success","timezone":"America/Los_Angeles","zip":"94588"}*/
 
 
   var temperature_measurement = "F";

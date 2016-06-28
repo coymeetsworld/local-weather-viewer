@@ -77,3 +77,16 @@ p {
 #section_weather_wind {
   margin-top: 40px;
 }
+
+
+
+.weather_table {
+  border: 1px solid red;
+  background-color: #DDD;
+  color: black;
+
+}
+
+.weather_table td {
+  padding: 10px;
+}
