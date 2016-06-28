@@ -6,23 +6,27 @@ $(document).ready(function () {
     return cardinal_direction[(Math.round((deg/22.5)+.5) % 16)];
   }
 
-  function getDateTime() {
-    var d = new Date();
+  function getDayName(date) {
+
+    /* Check if today. */
+    var todaysDate = new Date();
+    if (date.setHours(0,0,0,0) == todaysDate.setHours(0,0,0,0)) {
+      return "Today";
+    }
+
+    var tomorrowsDate = new Date();
+    tomorrowsDate.setDate(todaysDate.getDate()+1);
+    console.log("Tomorrows date: " + tomorrowsDate);
+    if (date.setHours(0,0,0,0) == tomorrowsDate.setHours(0,0,0,0)) {
+      return "Tomorrow";
+    }
+
+    /* Check if tomorrow.*/
+
+    /* Else return day name */
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    var day = days[d.getDay()];
-    var hours = d.getHours();
-    var minutes = d.getMinutes();
-    if (minutes < 10) {
-      minutes = "0" + minutes;
-    }
-    var cycle;
-    if (hours >= 12) {
-      cycle = "PM";
-      hours -= 12;
-    } else {
-      cycle = "AM";
-    }
-    return days[d.getDay()] + " " + hours + ":" + minutes + " " + cycle;
+    return days[date.getDay()];
+
   }
 
 
@@ -66,8 +70,8 @@ $(document).ready(function () {
   //NEED a way to get current temperature
 
   function getWeather(lat_coord, long_coord, city, region, countryCode) {
-    console.log("Latitude: " + lat_coord);
-    console.log("Longitude: " + long_coord);
+    //console.log("Latitude: " + lat_coord);
+    //console.log("Longitude: " + long_coord);
     $("#section_city").html("<h3>" + city + ", " + region + " " + countryCode + "</h3>");
 
     var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat_coord + "&lon=" + long_coord + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
@@ -77,16 +81,16 @@ $(document).ready(function () {
     console.log("Api: " + api_call);
     $.getJSON(api_call, function(data) {
 
-      console.log("Data");
-      console.log(data);
-      console.log("---------------------------------");
+      //console.log("Data");
+      //console.log(data);
+      //console.log("---------------------------------");
 
 
       var weather_table = $('<table class="weather_table">');
 
       $(createTableHeader()).appendTo(weather_table);
 
-      var weatherObj, date, wind_cardinal_direction;
+      var weatherObj, date, stringDate, dayName, wind_cardinal_direction;
       var weather_row, cell, weather_icon, weather_desc;
       for (var i = 0; i < 10; i++) {
         weatherObj = data.list[i];
@@ -94,12 +98,17 @@ $(document).ready(function () {
         weather_row = $('<tr>');
         cell = $('<td>');
 
+
         console.log("Day: " + i);
         console.log(weatherObj);
-        date = convertUTCDateToLocalDate(new Date(weatherObj.dt*1000));
-        console.log("Date: " + date);
-        console.log("Date Locale: " + date.toLocaleString());
-        cell.html(date);
+        date = new Date(weatherObj.dt*1000);
+        stringDate = convertUTCDateToLocalDate(date);
+
+        dayName = getDayName(date);
+        console.log("DayName: " + dayName);
+        console.log("Date: " + stringDate);
+        console.log("Date Locale: " + stringDate.toLocaleString());
+        cell.html("<p>" + dayName + "</p><p>" + stringDate + "</p>");
         cell.appendTo(weather_row);
 
         cell = $('<td>');
@@ -119,7 +128,7 @@ $(document).ready(function () {
         cell = $('<td>');
         wind_cardinal_direction = convertDegressToCompass(weatherObj.deg);
         var wind_cardinal_direction = convertDegressToCompass(weatherObj.deg);
-        console.log("Wind direction: " + wind_cardinal_direction);
+        //console.log("Wind direction: " + wind_cardinal_direction);
         cell.html(wind_cardinal_direction + " " + weatherObj.speed + " MPH");
         cell.appendTo(weather_row);
 
@@ -140,8 +149,8 @@ $(document).ready(function () {
 
 
   $.getJSON("http://ip-api.com/json", function(data) {
-    console.log("Data lat: " + data.lat);
-    console.log("Data lon: " + data.lon);
+    //console.log("Data lat: " + data.lat);
+    //console.log("Data lon: " + data.lon);
     getWeather(data.lat, data.lon, data.city, data.region, data.countryCode);
   });
 
