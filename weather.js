@@ -38,7 +38,27 @@ $(document).ready(function () {
       return monthNames[newDate.getMonth()] + " " + newDate.getDate();
   }
 
-
+  function createTableHeader() {
+    var head = $("<thead>");
+    var row = $("<tr>");
+    var header = $("<th>");
+    header.html("Day");
+    header.appendTo(row);
+    header = $("<th>");
+    header.html("High/Low");
+    header.appendTo(row);
+    header = $("<th>");
+    header.html("Description");
+    header.appendTo(row);
+    header = $("<th>");
+    header.html("Wind");
+    header.appendTo(row);
+    header = $("<th>");
+    header.html("Humidity");
+    header.appendTo(row);
+    row.appendTo(head);
+    return head;
+  }
 
   /* Grabbed from getWeather(), but can be modified when clicking on the temperature to convert from F to C, and vice versa. */
   var temperature;
@@ -64,37 +84,53 @@ $(document).ready(function () {
 
       var weather_table = $('<table class="weather_table">');
 
+      $(createTableHeader()).appendTo(weather_table);
+
       var weatherObj, date, wind_cardinal_direction;
-      var weather_row, cell_date;
+      var weather_row, cell, weather_icon, weather_desc;
       for (var i = 0; i < 10; i++) {
         weatherObj = data.list[i];
 
         weather_row = $('<tr>');
-        cell_date = $('<td>');
+        cell = $('<td>');
 
         console.log("Day: " + i);
         console.log(weatherObj);
         date = convertUTCDateToLocalDate(new Date(weatherObj.dt*1000));
         console.log("Date: " + date);
         console.log("Date Locale: " + date.toLocaleString());
-        cell_date.html(date);
-        cell_date.appendTo(weather_row);
+        cell.html(date);
+        cell.appendTo(weather_row);
 
+        cell = $('<td>');
+        cell.html(weatherObj.temp.max + "/" + weatherObj.temp.min);
+        cell.appendTo(weather_row);
 
-        //weatherObj.temp.max;
-        //weatherObj.temp.low;
-        //weatherObj.weather[0].description;
-        var iconClass = "wi-owm-" + weatherObj.weather[0].id;
+        cell = $('<td>');
+        weather_icon = $('<i>');
+        weather_icon.addClass("wi");
+        weather_icon.addClass("wi-owm-"+weatherObj.weather[0].id);
+        weather_icon.appendTo(cell);
+        weather_desc = $('<span>');
+        weather_desc.html(weatherObj.weather[0].description);
+        weather_desc.appendTo(cell);
+        cell.appendTo(weather_row);
+
+        cell = $('<td>');
         wind_cardinal_direction = convertDegressToCompass(weatherObj.deg);
         var wind_cardinal_direction = convertDegressToCompass(weatherObj.deg);
         console.log("Wind direction: " + wind_cardinal_direction);
-        //weatherObj.speed; //in MPH
-        //weatherObj.humidity;
+        cell.html(wind_cardinal_direction + " " + weatherObj.speed + " MPH");
+        cell.appendTo(weather_row);
+
+        cell = $('<td>');
+        cell.html(weatherObj.humidity + "%");
+        cell.appendTo(weather_row);
 
         $(weather_row).appendTo(weather_table);
       }
-      $(weather_table).prependTo("#new_weather_summary");
-  
+      $(weather_table).prependTo("#weather_summary");
+
 
     }).fail(function (jqXHR, textStatus, errorThrown) {
       console.log("Error: " + errorThrown);
