@@ -10,12 +10,15 @@ $(document).ready(function () {
     cardinalDirectionIcon.addClass("wi-wind");
     cardinalDirectionIcon.addClass("wi-towards-" + cardinalDirection.toLowerCase());
 
-    var span = $('<span>');
-    span.addClass("wind");
-    span.text(weatherObj.speed + " MPH");
+    var spanIcon = $('<span>');
+    spanIcon.addClass("wind-icon");
+    cardinalDirectionIcon.prependTo(spanIcon);
 
-    cardinalDirectionIcon.prependTo(span);
-    return span;
+    var spanStats = $('<span>');
+    spanStats.addClass("wind-stats");
+    spanStats.text(weatherObj.speed + " MPH");
+
+    return [spanIcon, spanStats];
 
   }
 
@@ -121,7 +124,7 @@ $(document).ready(function () {
         console.log("DayName: " + dayName);
         console.log("Date: " + stringDate);
         console.log("Date Locale: " + stringDate.toLocaleString());
-        cell.html("<p>" + dayName + "</p><p>" + stringDate + "</p>");
+        cell.html("<p class=\"dayName\">" + dayName + "</p><p>" + stringDate + "</p>");
         cell.appendTo(weather_row);
 
         cell = $('<td>');
@@ -139,7 +142,9 @@ $(document).ready(function () {
         cell.appendTo(weather_row);
 
         cell = $('<td>');
-        cell.html(getWindStats(weatherObj));
+        var windArray = getWindStats(weatherObj);
+        windArray[0].appendTo(cell);
+        windArray[1].appendTo(cell);
         cell.appendTo(weather_row);
 
         cell = $('<td>');

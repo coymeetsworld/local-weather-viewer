@@ -16,26 +16,39 @@ h1 {
 
 #weather_summary {
   margin: auto;
-  width: 90%;
+  width: 85%;
 }
 
 .weather_table {
   background-color: #FFF;
   color: black;
   margin: auto;
-  width: 90%;
+  width: 85%;
 
 }
 
 .weather_table th {
-  border: 1px solid black;
   padding: 7px 0 6px 10px;
 }
-
-.weather_table td {
-  padding: 10px 0 10px 10px;
+.weather_table tr {
   border: 1px solid black;
 }
+.weather_table td {
+  padding: 5px 0 5px 10px;
+  border: 1px solid black; /* remove later */
+}
+
+.weather_table td p {
+  font-size: 0.8em;
+  margin: 0;
+}
+.weather_table td p.dayName {
+  font-weight: bold;
+  font-size: 0.7em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
 .weather_table td i {
   font-size: 1.7em;
   display: table-cell;
@@ -46,9 +59,9 @@ h1 {
   vertical-align: middle;
   display: table-cell;
 }
-.weather_table td span.wind i {
-  padding: 10px;
-}
-.weather_table td span.wind {
-  display: inline;
+
+.weather_table td span.wind-icon {
+  padding: 0;
+  vertical-align: middle;
+  display: table-cell;
 }
