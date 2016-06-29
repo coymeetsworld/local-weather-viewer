@@ -36,12 +36,19 @@ h1 {
   padding: 10px 0 10px 10px;
   border: 1px solid black;
 }
+.weather_table td i {
+  font-size: 1.7em;
+  display: table-cell;
+}
+
 .weather_table td span {
   padding: 0 0 0 15px;
   vertical-align: middle;
   display: table-cell;
 }
-.weather_table td i {
-  font-size: 1.7em;
-  display: table-cell;
+.weather_table td span.wind i {
+  padding: 10px;
+}
+.weather_table td span.wind {
+  display: inline;
 }

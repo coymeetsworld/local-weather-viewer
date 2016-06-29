@@ -1,9 +1,22 @@
 $(document).ready(function () {
 
-  function convertDegressToCompass(deg) {
-    console.log("Degrees: " + deg);
-    var cardinal_direction=["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-    return cardinal_direction[(Math.round((deg/22.5)+.5) % 16)];
+
+  function getWindStats(weatherObj) {
+    var cardinalDirectionMap=["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+    var roundedDegree = Math.round((weatherObj.deg/22.5)+.5);
+    var cardinalDirection = cardinalDirectionMap[roundedDegree % 16];
+    var cardinalDirectionIcon = $('<i>');
+    cardinalDirectionIcon.addClass("wi");
+    cardinalDirectionIcon.addClass("wi-wind");
+    cardinalDirectionIcon.addClass("wi-towards-" + cardinalDirection.toLowerCase());
+
+    var span = $('<span>');
+    span.addClass("wind");
+    span.text(weatherObj.speed + " MPH");
+
+    cardinalDirectionIcon.prependTo(span);
+    return span;
+
   }
 
   function getDayName(date) {
@@ -126,10 +139,7 @@ $(document).ready(function () {
         cell.appendTo(weather_row);
 
         cell = $('<td>');
-        wind_cardinal_direction = convertDegressToCompass(weatherObj.deg);
-        var wind_cardinal_direction = convertDegressToCompass(weatherObj.deg);
-        //console.log("Wind direction: " + wind_cardinal_direction);
-        cell.html(wind_cardinal_direction + " " + weatherObj.speed + " MPH");
+        cell.html(getWindStats(weatherObj));
         cell.appendTo(weather_row);
 
         cell = $('<td>');
