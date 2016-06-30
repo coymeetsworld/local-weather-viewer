@@ -1,6 +1,5 @@
 $(document).ready(function () {
 
-
   function getWindStats(weatherObj) {
     var cardinalDirectionMap=["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
     var roundedDegree = Math.round((weatherObj.deg/22.5)+.5);
@@ -9,6 +8,8 @@ $(document).ready(function () {
     cardinalDirectionIcon.addClass("wi");
     cardinalDirectionIcon.addClass("wi-wind");
     cardinalDirectionIcon.addClass("wi-towards-" + cardinalDirection.toLowerCase());
+    cardinalDirectionIcon.attr('data-toggle', 'tooltip');
+    cardinalDirectionIcon.attr('title',cardinalDirection);
 
     var spanIcon = $('<span>');
     spanIcon.addClass("wind-icon");
@@ -152,6 +153,7 @@ $(document).ready(function () {
         weather_icon.addClass("wi");
         weather_icon.addClass("wi-owm-"+weatherObj.weather[0].id);
         weather_icon.appendTo(cell);
+
         weather_desc = $('<span>');
         weather_desc.html(weatherObj.weather[0].description);
         weather_desc.appendTo(cell);
@@ -170,6 +172,8 @@ $(document).ready(function () {
         $(weather_row).appendTo(weather_table);
       }
       $(weather_table).prependTo("#weather_summary");
+
+      $('[data-toggle="tooltip"]').tooltip(); // enable tooltips by hovering over wind direction icon.
 
       /* Needs to be after weather_table added to weather_summary*/
       $("th#HighLowColumn").click(function() {
