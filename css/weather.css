@@ -27,7 +27,6 @@ h1 {
 
 }
 
-
 #HighLowColumn:hover {
   background-color: #DDD;
 }
@@ -40,7 +39,7 @@ h1 {
 }
 .weather_table td {
   padding: 5px 0 5px 10px;
-  border: 1px solid black; /* remove later */
+  /*border: 1px solid black; */
 }
 
 .weather_table td p {
@@ -99,4 +98,73 @@ h1 {
 #myModalAbout h1 {
   font-size: 2em;
   text-align: center;
+}
+
+/* Overrides to change colors of weather icons. */
+.wi {
+  color: purple;
+}
+/* Thunderstorms, fog, cloudy, storm-showers*/
+.wi-owm-200,.wi-owm-230,.wi-owm-741,.wi-owm-531,.wi-owm-804 {
+  color: gray;
+}
+/* Lightning */
+.wi-owm-210 {
+  color: yellow;
+}
+/* sprinkle, showers, rain-mix */
+.wi-owm-300, .wi-owm-310, .wi-owm-313 {
+  color: LightSkyBlue;
+}
+/* rain */
+.wi-owm-302, .wi-owm-311 {
+  color: SkyBlue;
+}
+/* Snow */
+.wi-owm-600 {
+  color: cyan;
+}
+/* Sleet */
+.wi-owm-602 {
+  color: LightSlateGray;
+}
+/* Smoke */
+.wi-owm-711 {
+  color: black;
+}
+/* Day-haze */
+.wi-owm-721 {
+  color: orange;
+}
+/* Dust */
+.wi-owm-731 {
+  color: tan;
+}
+/* Tornado */
+.wi-owm-781 {
+  color: purple;
+}
+.wi-owm-800 {
+  color: gold;
+}
+/* hot */
+.wi-owm-904 {
+  color: red;
+}
+
+/* hail */
+.wi-owm-906 {
+  color: LightGray;
+}
+/* Windy, Strong wind */
+.wi-owm-905, .wi-owm-957 {
+  color: lime;
+}
+/* Cloudy Gusts */
+.wi-owm-771 {
+  color: LimeGreen;
+}
+/* Wind direction icons. */
+.wi.wi-wind {
+  color: #000;
 }
