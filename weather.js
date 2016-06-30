@@ -23,9 +23,16 @@ $(document).ready(function () {
   }
 
   function getDayName(date) {
+    console.log("Calling getDayName");
+    console.log("Date: " + date);
 
     /* Check if today. */
     var todaysDate = new Date();
+    console.log("Todays Date: " + todaysDate);
+    //var utc = todaysDate.getTime() + (todaysDate.getTimezoneOffset() * 60000);
+    //var todaysDateUTC = new Date(utc);
+    //console.log("todaysDateUTC: " + todaysDateUTC);
+    //if (date.setHours(0,0,0,0) == todaysDateUTC.setHours(0,0,0,0)) {
     if (date.setHours(0,0,0,0) == todaysDate.setHours(0,0,0,0)) {
       return "Today";
     }
@@ -49,7 +56,6 @@ $(document).ready(function () {
   function convertUTCDateToLocalDate(date) {
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      console.log("DATE: " + date);
       var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
       var offset = date.getTimezoneOffset() / 60;
       var hours = date.getHours();
@@ -64,8 +70,8 @@ $(document).ready(function () {
     var header = $("<th>");
     header.html("Day");
     header.appendTo(row);
-    header = $("<th>");
-    header.html("High/Low");
+    header = $("<th id=\"HighLowColumn\">");
+    header.html("High/Low F&deg;");
     header.appendTo(row);
     header = $("<th>");
     header.html("Description");
@@ -77,6 +83,9 @@ $(document).ready(function () {
     header.html("Humidity");
     header.appendTo(row);
     row.appendTo(head);
+
+
+
     return head;
   }
 
@@ -106,6 +115,7 @@ $(document).ready(function () {
 
       $(createTableHeader()).appendTo(weather_table);
 
+
       var weatherObj, date, stringDate, dayName, wind_cardinal_direction;
       var weather_row, cell, weather_icon, weather_desc;
       for (var i = 0; i < 10; i++) {
@@ -114,21 +124,27 @@ $(document).ready(function () {
         weather_row = $('<tr>');
         cell = $('<td>');
 
-
-        console.log("Day: " + i);
+        //dt:       1467230400
+        //GMT: Wed, 29 Jun 2016 20:00:00 GMT
+        //Your time zone: 6/29/2016, 1:00:00 PM GMT-7:00 DST
+        //offset:   25200 seconds offset (-7 GMT hours)
+        //subtract: 1467118800
         console.log(weatherObj);
-        date = new Date(weatherObj.dt*1000);
+        date = new Date((weatherObj.dt)*1000); //*1000 because value takes in millisecionds, dt is epoch seconds.
+        console.log("dt: " + weatherObj.dt);
+        console.log("DATE: " + date);
         stringDate = convertUTCDateToLocalDate(date);
-
+        console.log("Date: " + stringDate);
         dayName = getDayName(date);
         console.log("DayName: " + dayName);
-        console.log("Date: " + stringDate);
+
         console.log("Date Locale: " + stringDate.toLocaleString());
         cell.html("<p class=\"dayName\">" + dayName + "</p><p>" + stringDate + "</p>");
         cell.appendTo(weather_row);
 
         cell = $('<td>');
-        cell.html(weatherObj.temp.max + "/" + weatherObj.temp.min);
+        cell.addClass("highLows");
+        cell.html("<span class=\"high\">" + weatherObj.temp.max + "</span> / <span class=\"low\">" + weatherObj.temp.min + "</span>");
         cell.appendTo(weather_row);
 
         cell = $('<td>');
@@ -155,6 +171,11 @@ $(document).ready(function () {
       }
       $(weather_table).prependTo("#weather_summary");
 
+      /* Needs to be after weather_table added to weather_summary*/
+      $("th#HighLowColumn").click(function() {
+        console.log("HL clicked");
+        convertTemperatures();
+      });
 
     }).fail(function (jqXHR, textStatus, errorThrown) {
       console.log("Error: " + errorThrown);
@@ -170,19 +191,35 @@ $(document).ready(function () {
   });
 
 
-  var temperature_measurement = "F";
-  $("#section_temperature").click(function() {
-    if (temperature_measurement == "F") {
-      temperature_measurement = "C";
-      temperature = (temperature - 32) / 1.8;
-      $("#section_temperature").html("<p>" + Math.round(temperature*100)/100 + " C</p>");
-    } else if (temperature_measurement == "C") {
-      temperature_measurement = "F";
-      temperature = temperature * 1.8 + 32;
-      $("#section_temperature").html("<p>" + Math.round(temperature*100) /100 + " F</p>");
+  function convertTemperatures() {
+
+    var currentUnit = $("#HighLowColumn").text().substr(-2,1); //High/Low Column reads "High/Low [F\C]&deg;";
+
+    var convertFunction;
+    if (currentUnit == 'F') {
+      convertFunction = convertToC;
+      $("#HighLowColumn").html($("#HighLowColumn").text().slice(0,-2) + "C&deg;");
+    } else if (currentUnit == 'C') {
+      convertFunction = convertToF;
+      $("#HighLowColumn").html($("#HighLowColumn").text().slice(0,-2) + "F&deg;");
     } else {
-      console.log("Error: measurement " + temperature_measurement + " not recognized. Please check script.");
+      console.log("ERROR: Expected F or C but got " + currentUnit);
     }
-  });
+
+    $(".highLows .high").each(function() {
+      $(this).text(convertFunction($(this).text()));
+    });
+    $(".highLows .low").each(function() {
+      $(this).text(convertFunction($(this).text()));
+    });
+
+    function convertToF(celsius) {
+      return Math.round((celsius * 1.8 + 32)*100) /100;
+    }
+    function convertToC(fahrenheit) {
+      return Math.round(((fahrenheit - 32) / 1.8)*100)/100;
+    }
+  }
+
 
 });

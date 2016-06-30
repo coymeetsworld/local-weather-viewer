@@ -27,6 +27,11 @@ h1 {
 
 }
 
+
+#HighLowColumn:hover {
+  background-color: #DDD;
+}
+
 .weather_table th {
   padding: 7px 0 6px 10px;
 }
@@ -42,6 +47,11 @@ h1 {
   font-size: 0.8em;
   margin: 0;
 }
+.weather_table td.highLows span {
+  display: inline;
+  padding-left: 0;
+}
+
 .weather_table td p.dayName {
   font-weight: bold;
   font-size: 0.7em;
@@ -64,4 +74,29 @@ h1 {
   padding: 0;
   vertical-align: middle;
   display: table-cell;
+}
+
+#about {
+  bottom: 0;
+  width: 100%;
+  position: fixed;
+  padding-bottom: 7px;
+  text-align: right;
+}
+#about a {
+  padding-right: 15px;
+  font-size: 1em;
+  color: white;
+}
+
+#myModalAbout {
+  color: black;
+}
+.modal-body .row {
+	margin: auto;
+}
+
+#myModalAbout h1 {
+  font-size: 2em;
+  text-align: center;
 }
