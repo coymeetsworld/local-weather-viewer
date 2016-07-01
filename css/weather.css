@@ -124,6 +124,9 @@ h1 {
 
 }
 
+#HighLowColumn {
+  width: 20%;
+}
 #HighLowColumn:hover {
   background-color: #DDD;
 }
@@ -148,6 +151,27 @@ h1 {
   padding-left: 0;
 }
 
+.weather_table td.highLows span.hlc {
+  display: none;
+}
+
+.weather_table td.highLows span span.high {
+  font-size: 1.2em;
+}
+.weather_table td.highLows span span.slash {
+  display: inline-block;
+  margin: 0 2px 0 6px;
+  height: 17px;
+  border-right: 1px solid #555;
+  transform: skewX(-35deg);
+  position: relative;
+}
+.weather_table td.highLows span span.low {
+  position: relative;
+  bottom: -8px;
+  margin-left: 2px;
+  color: #888;
+}
 .weather_table td p.dayName {
   font-weight: bold;
   font-size: 0.7em;

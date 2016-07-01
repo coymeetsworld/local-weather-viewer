@@ -217,7 +217,10 @@ $(document).ready(function () {
 
         cell = $('<td>');
         cell.addClass("highLows");
-        cell.html("<span class=\"high\">" + Math.round(weatherObj.temp.max) + "</span> / <span class=\"low\">" + Math.round(weatherObj.temp.min) + "</span>");
+        cell.html("<span class=\"hlf\"><span class=\"high\">" + Math.round(weatherObj.temp.max) + "</span><span class=\"slash\"></span><span class=\"low\">" + Math.round(weatherObj.temp.min) + "</span></span>");
+        cell.append("<span class=\"hlc\"><span class=\"high\">" + convertToCelsius(weatherObj.temp.max) + "</span><span class=\"slash\"></span><span class=\"low\">" + convertToCelsius(weatherObj.temp.min) + "</span></span>");
+
+
         cell.appendTo(weather_row);
 
         cell = $('<td>');
@@ -249,8 +252,20 @@ $(document).ready(function () {
 
       /* Needs to be after weather_table added to weather_forecast*/
       $("th#HighLowColumn").click(function() {
-        //console.log("HL clicked");
-        convertTemperatures();
+        var currentUnit = $("#HighLowColumn").text().substr(-2,1); //High/Low Column reads "High/Low [F\C]&deg;";
+        if (currentUnit == 'F') {
+          $(".hlc").css('display','inline');
+          $(".hlf").css('display','none');
+          $("#HighLowColumn").html($("#HighLowColumn").text().slice(0,-2) + "C&deg;");
+        } else if (currentUnit == 'C') {
+          $(".hlc").css('display','none');
+          $(".hlf").css('display','inline');
+          $("#HighLowColumn").html($("#HighLowColumn").text().slice(0,-2) + "F&deg;");
+        } else {
+          console.log("ERROR: Expected F or C but got " + currentUnit);
+        }
+
+
       });
 
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -264,37 +279,5 @@ $(document).ready(function () {
     //console.log("Data lon: " + data.lon);
     getWeather(data);
   });
-
-
-  function convertTemperatures() {
-
-    var currentUnit = $("#HighLowColumn").text().substr(-2,1); //High/Low Column reads "High/Low [F\C]&deg;";
-
-    var convertFunction;
-    if (currentUnit == 'F') {
-      convertFunction = convertToC;
-      $("#HighLowColumn").html($("#HighLowColumn").text().slice(0,-2) + "C&deg;");
-    } else if (currentUnit == 'C') {
-      convertFunction = convertToF;
-      $("#HighLowColumn").html($("#HighLowColumn").text().slice(0,-2) + "F&deg;");
-    } else {
-      console.log("ERROR: Expected F or C but got " + currentUnit);
-    }
-
-    $(".highLows .high").each(function() {
-      $(this).text(convertFunction($(this).text()));
-    });
-    $(".highLows .low").each(function() {
-      $(this).text(convertFunction($(this).text()));
-    });
-
-    function convertToF(celsius) {
-      return Math.round(celsius * 1.8 + 32);
-    }
-    function convertToC(fahrenheit) {
-      return Math.round((fahrenheit - 32) / 1.8);
-    }
-  }
-
 
 });
