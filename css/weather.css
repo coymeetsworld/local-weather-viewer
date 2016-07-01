@@ -1,8 +1,6 @@
 body {
   background: linear-gradient(to bottom, SteelBlue 20%, SkyBlue 100%);
   /*background: linear-gradient(to bottom, #325571 0%, #8e9fa4 48%, #decab2 76%, #f2d580 88%, #ffa642 100%);*/
-
-  color: white;
 }
 
 #row_title {
@@ -14,9 +12,96 @@ h1 {
 }
 
 
+
+/* Weather summary */
 #weather_summary {
+  width: 40%;
+  margin-left: 14%;
+  margin-top: 20px;
+  margin-bottom: 35px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background-color: #FFF;
+  padding: 5px;
+  color: black;
+}
+#ws_location {
+  font-size: 1.7em;
+}
+
+#ws_datetime, #ws_description {
+  font-size: 1.2em;
+}
+
+
+
+#ws_details {
+  padding-top: 15px;
+}
+#ws_icon {
+  float: left;
+  font-size: 4em;
+}
+#ws_temp_f {
+  float: left;
+  font-size: 5em;
+  margin-top: -20px;
+  margin-left: 25px;
+}
+#ws_temp_c {
+  float: left;
+  font-size: 5em;
+  margin-top: -20px;
+  margin-left: 25px;
+  display: none;
+}
+#ws_temp_unit {
+
+}
+#ws_temp_f_toggle {
+  margin-right: -3px;
+}
+#ws_temp_c_toggle {
+  margin-left: -5px;
+}
+#ws_misc_details {
+  float: right;
+  margin-top: -20px;
+  padding-right: 20px;
+}
+
+#ws_misc_details table tr td {
+  padding-right: 10px;
+  padding-bottom: 5px;
+  vertical-align: middle;
+}
+#ws_misc_details table tr td span {
+  padding-right: 5px;
+  vertical-align: middle;
+  display: table-cell;
+}
+#ws_misc_details table tr td span i {
+  font-size: 1.4em;
+  vertical-align: middle;
+  display: table-cell;
+}
+#ws_misc_wind_title {
+  padding-right: 5px;
+  vertical-align: middle;
+}
+#ws_misc_wind_stats {
+  margin-left: -5px;
+  vertical-align: middle;
+}
+/* End Weather summary */
+
+/* Weather Forecast */
+
+#weather_forecast {
   margin: auto;
   width: 85%;
+  margin-bottom: 80px;
+
 }
 
 .weather_table {
@@ -75,10 +160,12 @@ h1 {
   display: table-cell;
 }
 
+/* End Weather Forecast */
+
+/* About section */
 #about {
   bottom: 0;
   width: 100%;
-  position: fixed;
   padding-bottom: 7px;
   text-align: right;
 }
@@ -100,6 +187,9 @@ h1 {
   text-align: center;
 }
 
+/* End About Section */
+
+/* Weather Icon coloring */
 /* Overrides to change colors of weather icons. */
 .wi {
   color: purple;
@@ -166,5 +256,9 @@ h1 {
 }
 /* Wind direction icons. */
 .wi.wi-wind {
+  color: #000;
+}
+
+.wi-sunrise, .wi-sunset {
   color: #000;
 }
