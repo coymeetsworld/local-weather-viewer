@@ -122,6 +122,21 @@ $(document).ready(function () {
       $("#ws_temp_f").text(Math.round(data.main.temp));
       $("#ws_temp_c").text(convertToCelsius(data.main.temp));
 
+      $("#ws_temp_f_toggle").click(function() {
+        console.log("F click");
+        $("#ws_temp_c").css('display','none');
+        $("#ws_temp_f").css('display','inline');
+        $("#ws_temp_f_toggle").css('font-weight', 'bold');
+        $("#ws_temp_c_toggle").css('font-weight', 'normal');
+      });
+      $("#ws_temp_c_toggle").click(function() {
+        console.log("C click");
+        $("#ws_temp_c").css('display','inline');
+        $("#ws_temp_f").css('display','none');
+        $("#ws_temp_f_toggle").css('font-weight', 'normal');
+        $("#ws_temp_c_toggle").css('font-weight', 'bold');
+      });
+
       $("#ws_humidity").text(data.main.humidity + "%");
 
       var windArray = getWindStats(data.wind.deg, data.wind.speed);
@@ -202,7 +217,7 @@ $(document).ready(function () {
 
         cell = $('<td>');
         cell.addClass("highLows");
-        cell.html("<span class=\"high\">" + weatherObj.temp.max + "</span> / <span class=\"low\">" + weatherObj.temp.min + "</span>");
+        cell.html("<span class=\"high\">" + Math.round(weatherObj.temp.max) + "</span> / <span class=\"low\">" + Math.round(weatherObj.temp.min) + "</span>");
         cell.appendTo(weather_row);
 
         cell = $('<td>');
@@ -274,10 +289,10 @@ $(document).ready(function () {
     });
 
     function convertToF(celsius) {
-      return Math.round((celsius * 1.8 + 32)*100) /100;
+      return Math.round(celsius * 1.8 + 32);
     }
     function convertToC(fahrenheit) {
-      return Math.round(((fahrenheit - 32) / 1.8)*100)/100;
+      return Math.round((fahrenheit - 32) / 1.8);
     }
   }
 

@@ -60,6 +60,7 @@ h1 {
 }
 #ws_temp_f_toggle {
   margin-right: -3px;
+  font-weight: bold;
 }
 #ws_temp_c_toggle {
   margin-left: -5px;
