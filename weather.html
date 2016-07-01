@@ -33,16 +33,16 @@
         <h1>Local Weather</h1>
       </div>
       <div class="row" id="weather_summary">
-        <div id="ws_location">Pleasanton, CA 94588</div>
-        <div id="ws_datetime">Thursday 6:00 PM</div>
+        <div id="ws_location"></div>
+        <div id="ws_datetime"></div>
         <div id="ws_description">
-          <span id="wsd">Sunny</span>
+          <span id="wsd"></span>
         </div>
         <div id="ws_details">
-          <i id="ws_icon" class="wi wi-owm-800"></i>
+          <i id="ws_icon" class="wi"></i>
           <div>
-            <div id="ws_temp_f">88</div>
-            <div id="ws_temp_c">31</div>
+            <div id="ws_temp_f"></div>
+            <div id="ws_temp_c"></div>
             <div id="ws_temp_unit">
               <span id="ws_temp_f_toggle">&deg;F</span>
               &nbsp;|&nbsp;
@@ -53,18 +53,18 @@
             <table>
               <tr>
                 <td>Humidity</td>
-                <td>41%</td>
+                <td id="ws_humidity"></td>
               </tr>
               <tr>
-                <td id="ws_misc_wind_title">Wind</td>
+                <td id="ws_wind_title">Wind</td>
                 <td>
-                  <span><i class="wi wi-wind wi-towards-wsw" data-toggle="tooltip" title="" data-original-title="WSW"></i></span>
-                  <span id="ws_misc_wind_stats">1.11 MPH</span>
+                  <span id="ws_wind_icon"></span>
+                  <span id="ws_wind_stats"></span>
                 </td>
               </tr>
               <tr>
-                <td><i class="wi wi-sunrise" data-toggle="tooltip" title="" data-original-title="Sunrise"></i> 5:49 am</td>
-                <td><i class="wi wi-sunset" data-toggle="tooltip" title="" data-original-title="Sunset"></i> 8:33 pm</td>
+                <td><i class="wi wi-sunrise" data-toggle="tooltip" title="" data-original-title="Sunrise"></i><span id="ws_sunrise_time"></span></td>
+                <td><i class="wi wi-sunset" data-toggle="tooltip" title="" data-original-title="Sunset"></i><span id="ws_sunset_time"></span></td>
               </tr>
             </table>
           </div>

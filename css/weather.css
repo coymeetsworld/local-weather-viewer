@@ -85,14 +85,25 @@ h1 {
   vertical-align: middle;
   display: table-cell;
 }
-#ws_misc_wind_title {
+
+#ws_misc_details table tr td span#ws_sunrise_time {
+  padding-left: 5px;
+  display: inline;
+}
+#ws_misc_details table tr td span#ws_sunset_time {
+  padding-left: 5px;
+  display: inline;
+}
+
+#ws_wind_title {
   padding-right: 5px;
   vertical-align: middle;
 }
-#ws_misc_wind_stats {
+#ws_wind_stats {
   margin-left: -5px;
   vertical-align: middle;
 }
+
 /* End Weather summary */
 
 /* Weather Forecast */
@@ -202,12 +213,12 @@ h1 {
 .wi-owm-210 {
   color: yellow;
 }
-/* sprinkle, showers, rain-mix */
-.wi-owm-300, .wi-owm-310, .wi-owm-313 {
+/* sprinkle, showers, rain-mix, mist */
+.wi-owm-300, .wi-owm-310, .wi-owm-313, .wi-owm-500, .wi-owm-701 {
   color: LightSkyBlue;
 }
 /* rain */
-.wi-owm-302, .wi-owm-311 {
+.wi-owm-302, .wi-owm-311, {
   color: SkyBlue;
 }
 /* Snow */
@@ -234,6 +245,7 @@ h1 {
 .wi-owm-781 {
   color: purple;
 }
+/* Sunny */
 .wi-owm-800 {
   color: gold;
 }

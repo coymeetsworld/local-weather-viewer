@@ -1,8 +1,8 @@
 $(document).ready(function () {
 
-  function getWindStats(weatherObj) {
+  function getWindStats(degrees, speed) {
     var cardinalDirectionMap=["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-    var roundedDegree = Math.round((weatherObj.deg/22.5)+.5);
+    var roundedDegree = Math.round((degrees/22.5)+.5);
     var cardinalDirection = cardinalDirectionMap[roundedDegree % 16];
     var cardinalDirectionIcon = $('<i>');
     cardinalDirectionIcon.addClass("wi");
@@ -17,7 +17,7 @@ $(document).ready(function () {
 
     var spanStats = $('<span>');
     spanStats.addClass("wind-stats");
-    spanStats.text(weatherObj.speed + " MPH");
+    spanStats.text(speed + " MPH");
 
     return [spanIcon, spanStats];
   }
@@ -50,6 +50,9 @@ $(document).ready(function () {
     return days[date.getDay()];
   }
 
+  function convertToCelsius(fahrenheit) {
+    return Math.round(((fahrenheit - 32) / 1.8));
+  }
 
   function convertUTCDateToLocalDate(date) {
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -88,36 +91,75 @@ $(document).ready(function () {
   var temperature;
 
   //NEED a way to get current temperature
-  function getCurrentWeather(lat_coord, long_coord) {
-    var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat_coord + "&lon=" + long_coord + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7"
+  function getCurrentWeather(location_data) {
+    console.log(location_data);
+    var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + location_data.lat + "&lon=" + location_data.lon + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7"
     $.getJSON(api_call, function(data) {
       console.log("Current weather");
       console.log(data);
+
+      $("#ws_location").text(location_data.city + ", " + location_data.region + " " + location_data.countryCode);
+
       var currentTemp = data.main.temp;
       var currentHumidity = data.main.humidity;
       var weatherIconId = data.weather[0].id;
 
-      cell.addClass("highLows");
+      date = new Date(data.dt*1000);
+      var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+      console.log("Date: " + date);
+      var timeString = (date.getHours() % 12) + ":" + date.getMinutes();
+      if (date.getHours() % 12 == 0) { timeString += " AM"; }
+      else { timeString += " PM" }
+
+      $("#ws_datetime").text(days[date.getDay()] + " " + timeString);
+
+      var weatherDesc = data.weather[0].description;
+      $("#wsd").text(weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1));
+
+      $("#ws_icon").addClass("wi-owm-" + data.weather[0].id);
+
+      $("#ws_temp_f").text(Math.round(data.main.temp));
+      $("#ws_temp_c").text(convertToCelsius(data.main.temp));
+
+      $("#ws_humidity").text(data.main.humidity + "%");
+
+      var windArray = getWindStats(data.wind.deg, data.wind.speed);
+      windArray[0].appendTo($("#ws_wind_icon"));
+      windArray[1].appendTo($("#ws_wind_stats"));
+
+      //data.sys.sunrise;
+      date = new Date(data.sys.sunrise*1000);
+      timeString = (date.getHours() % 12) + ":" + date.getMinutes();
+      if (date.getHours() < 12) { timeString += " AM"; }
+      else { timeString += " PM" }
+      console.log("TIMESTRING: " + timeString);
+      $("#ws_sunrise_time").text(timeString);
+
+      //data.sys.sunset;
+      date = new Date(data.sys.sunset*1000);
+      timeString = (date.getHours() % 12) + ":" + date.getMinutes();
+      if (date.getHours() < 12) { timeString += " AM"; }
+      else { timeString += " PM" }
+      $("#ws_sunset_time").text(timeString);
+      /*cell.addClass("highLows");
       cell.html("<span class=\"high\">" + weatherObj.temp.max + "</span> / <span class=\"low\">" + weatherObj.temp.min + "</span>");
       cell.appendTo(weather_row);
+      */
 
-
-      $(weather_table).prependTo("#weather_summary");
+      //$(weather_table).prependTo("#weather_summary");
 
     });
   }
 
 
-  function getWeather(lat_coord, long_coord, city, region, countryCode) {
-    //console.log("Latitude: " + lat_coord);
-    //console.log("Longitude: " + long_coord);
-    $("#section_city").html("<h3>" + city + ", " + region + " " + countryCode + "</h3>");
+  function getWeather(location_data) {
 
-    var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat_coord + "&lon=" + long_coord + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
-    api_call = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat_coord + "&lon=" + long_coord + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
-    api_call = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + lat_coord + "&lon=" + long_coord + "&cnt=10&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
+    var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + location_data.lat + "&lon=" + location_data.lon + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
+    api_call = "http://api.openweathermap.org/data/2.5/forecast?lat=" + location_data.lat + "&lon=" + location_data.lon + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
+    api_call = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + location_data.lat + "&lon=" + location_data.lon + "&cnt=10&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
 
-    getCurrentWeather(lat_coord, long_coord);
+    getCurrentWeather(location_data);
 
     console.log("Api: " + api_call);
     $.getJSON(api_call, function(data) {
@@ -175,7 +217,7 @@ $(document).ready(function () {
         cell.appendTo(weather_row);
 
         cell = $('<td>');
-        var windArray = getWindStats(weatherObj);
+        var windArray = getWindStats(weatherObj.deg, weatherObj.speed);
         windArray[0].appendTo(cell);
         windArray[1].appendTo(cell);
         cell.appendTo(weather_row);
@@ -205,7 +247,7 @@ $(document).ready(function () {
   $.getJSON("http://ip-api.com/json", function(data) {
     //console.log("Data lat: " + data.lat);
     //console.log("Data lon: " + data.lon);
-    getWeather(data.lat, data.lon, data.city, data.region, data.countryCode);
+    getWeather(data);
   });
 
 
