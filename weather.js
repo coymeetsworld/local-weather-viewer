@@ -107,7 +107,7 @@ $(document).ready(function () {
 
       var timeString;
       if (date.getHours() < 12) {
-        timeString = date.getHours()+12 + ":" + date.getMinutes() + " AM";
+        timeString = date.getHours() + ":" + date.getMinutes() + " AM";
       } else {
         timeString = date.getHours()-12 + ":" + date.getMinutes() + " PM";
       }
@@ -168,13 +168,11 @@ $(document).ready(function () {
 
 
   function getWeather(location_data) {
-
     var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + location_data.lat + "&lon=" + location_data.lon + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
     api_call = "http://api.openweathermap.org/data/2.5/forecast?lat=" + location_data.lat + "&lon=" + location_data.lon + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
     api_call = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + location_data.lat + "&lon=" + location_data.lon + "&cnt=10&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
 
     getCurrentWeather(location_data);
-
     console.log("Api: " + api_call);
     $.getJSON(api_call, function(data) {
 
