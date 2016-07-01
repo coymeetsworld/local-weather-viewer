@@ -20,16 +20,15 @@ $(document).ready(function () {
     spanStats.text(weatherObj.speed + " MPH");
 
     return [spanIcon, spanStats];
-
   }
 
   function getDayName(date) {
-    console.log("Calling getDayName");
-    console.log("Date: " + date);
+    //console.log("Calling getDayName");
+    //console.log("Date: " + date);
 
     /* Check if today. */
     var todaysDate = new Date();
-    console.log("Todays Date: " + todaysDate);
+    //console.log("Todays Date: " + todaysDate);
     //var utc = todaysDate.getTime() + (todaysDate.getTimezoneOffset() * 60000);
     //var todaysDateUTC = new Date(utc);
     //console.log("todaysDateUTC: " + todaysDateUTC);
@@ -38,19 +37,17 @@ $(document).ready(function () {
       return "Today";
     }
 
+    /* Check if tomorrow.*/
     var tomorrowsDate = new Date();
     tomorrowsDate.setDate(todaysDate.getDate()+1);
-    console.log("Tomorrows date: " + tomorrowsDate);
+    //console.log("Tomorrows date: " + tomorrowsDate);
     if (date.setHours(0,0,0,0) == tomorrowsDate.setHours(0,0,0,0)) {
       return "Tomorrow";
     }
 
-    /* Check if tomorrow.*/
-
     /* Else return day name */
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     return days[date.getDay()];
-
   }
 
 
@@ -61,7 +58,7 @@ $(document).ready(function () {
       var offset = date.getTimezoneOffset() / 60;
       var hours = date.getHours();
       newDate.setHours(hours - offset);
-      console.log(monthNames[newDate.getMonth()] + " " + newDate.getDate());
+      //console.log(monthNames[newDate.getMonth()] + " " + newDate.getDate());
       return monthNames[newDate.getMonth()] + " " + newDate.getDate();
   }
 
@@ -84,9 +81,6 @@ $(document).ready(function () {
     header.html("Humidity");
     header.appendTo(row);
     row.appendTo(head);
-
-
-
     return head;
   }
 
@@ -94,6 +88,25 @@ $(document).ready(function () {
   var temperature;
 
   //NEED a way to get current temperature
+  function getCurrentWeather(lat_coord, long_coord) {
+    var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat_coord + "&lon=" + long_coord + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7"
+    $.getJSON(api_call, function(data) {
+      console.log("Current weather");
+      console.log(data);
+      var currentTemp = data.main.temp;
+      var currentHumidity = data.main.humidity;
+      var weatherIconId = data.weather[0].id;
+
+      cell.addClass("highLows");
+      cell.html("<span class=\"high\">" + weatherObj.temp.max + "</span> / <span class=\"low\">" + weatherObj.temp.min + "</span>");
+      cell.appendTo(weather_row);
+
+
+      $(weather_table).prependTo("#weather_summary");
+
+    });
+  }
+
 
   function getWeather(lat_coord, long_coord, city, region, countryCode) {
     //console.log("Latitude: " + lat_coord);
@@ -103,6 +116,8 @@ $(document).ready(function () {
     var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat_coord + "&lon=" + long_coord + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
     api_call = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat_coord + "&lon=" + long_coord + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
     api_call = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + lat_coord + "&lon=" + long_coord + "&cnt=10&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
+
+    getCurrentWeather(lat_coord, long_coord);
 
     console.log("Api: " + api_call);
     $.getJSON(api_call, function(data) {
@@ -132,14 +147,14 @@ $(document).ready(function () {
         //subtract: 1467118800
         console.log(weatherObj);
         date = new Date((weatherObj.dt)*1000); //*1000 because value takes in millisecionds, dt is epoch seconds.
-        console.log("dt: " + weatherObj.dt);
-        console.log("DATE: " + date);
+        //console.log("dt: " + weatherObj.dt);
+        //console.log("DATE: " + date);
         stringDate = convertUTCDateToLocalDate(date);
-        console.log("Date: " + stringDate);
+        //console.log("Date: " + stringDate);
         dayName = getDayName(date);
-        console.log("DayName: " + dayName);
+        //console.log("DayName: " + dayName);
 
-        console.log("Date Locale: " + stringDate.toLocaleString());
+        //console.log("Date Locale: " + stringDate.toLocaleString());
         cell.html("<p class=\"dayName\">" + dayName + "</p><p>" + stringDate + "</p>");
         cell.appendTo(weather_row);
 
@@ -171,13 +186,13 @@ $(document).ready(function () {
 
         $(weather_row).appendTo(weather_table);
       }
-      $(weather_table).prependTo("#weather_summary");
+      $(weather_table).prependTo("#weather_forecast");
 
       $('[data-toggle="tooltip"]').tooltip(); // enable tooltips by hovering over wind direction icon.
 
-      /* Needs to be after weather_table added to weather_summary*/
+      /* Needs to be after weather_table added to weather_forecast*/
       $("th#HighLowColumn").click(function() {
-        console.log("HL clicked");
+        //console.log("HL clicked");
         convertTemperatures();
       });
 
@@ -186,7 +201,6 @@ $(document).ready(function () {
       console.log("TextStatus: " + textStatus);
     });
   }
-
 
   $.getJSON("http://ip-api.com/json", function(data) {
     //console.log("Data lat: " + data.lat);
