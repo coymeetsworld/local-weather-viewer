@@ -3,21 +3,13 @@ body {
   /*background: linear-gradient(to bottom, #325571 0%, #8e9fa4 48%, #decab2 76%, #f2d580 88%, #ffa642 100%);*/
 }
 
-#row_title {
-  margin-bottom: 30px;
-}
-h1 {
-  font-size: 2.6em;
-  text-align: center;
-}
-
 
 
 /* Weather summary */
 #weather_summary {
   width: 40%;
   margin-left: 14%;
-  margin-top: 20px;
+  margin-top: 80px;
   margin-bottom: 35px;
   border: 1px solid #000;
   border-radius: 5px;
@@ -200,13 +192,12 @@ h1 {
 
 /* About section */
 #about {
-  bottom: 0;
-  width: 100%;
-  padding-bottom: 7px;
+  width: 85%;
+  margin: auto;
+  padding-top: 7px;
   text-align: right;
 }
 #about a {
-  padding-right: 15px;
   font-size: 1em;
   color: white;
 }
