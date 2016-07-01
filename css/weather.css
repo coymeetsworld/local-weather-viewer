@@ -54,8 +54,14 @@ body {
   margin-right: -3px;
   font-weight: bold;
 }
+#ws_temp_f_toggle:hover {
+  cursor: pointer;
+}
 #ws_temp_c_toggle {
   margin-left: -5px;
+}
+#ws_temp_c_toggle:hover {
+  cursor: pointer;
 }
 #ws_misc_details {
   float: right;
@@ -121,6 +127,7 @@ body {
 }
 #HighLowColumn:hover {
   background-color: #DDD;
+  cursor: pointer;
 }
 
 .weather_table th {
