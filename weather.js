@@ -87,8 +87,6 @@ $(document).ready(function () {
     return head;
   }
 
-  /* Grabbed from getWeather(), but can be modified when clicking on the temperature to convert from F to C, and vice versa. */
-  var temperature;
 
   //NEED a way to get current temperature
   function getCurrentWeather(location_data) {
@@ -107,11 +105,12 @@ $(document).ready(function () {
       date = new Date(data.dt*1000);
       var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-      console.log("Date: " + date);
-      var timeString = (date.getHours() % 12) + ":" + date.getMinutes();
-      if (date.getHours() % 12 == 0) { timeString += " AM"; }
-      else { timeString += " PM" }
-
+      var timeString;
+      if (date.getHours() < 12) {
+        timeString = date.getHours()+12 + ":" + date.getMinutes() + " AM";
+      } else {
+        timeString = date.getHours()-12 + ":" + date.getMinutes() + " PM";
+      }
       $("#ws_datetime").text(days[date.getDay()] + " " + timeString);
 
       var weatherDesc = data.weather[0].description;
