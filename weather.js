@@ -54,6 +54,11 @@ $(document).ready(function () {
     return Math.round(((fahrenheit - 32) / 1.8));
   }
 
+  /* Put padded 0s in formatted time. */
+  function pad(n) {
+    return (n < 10) ? ("0" + n) : n;
+}
+
   function convertUTCDateToLocalDate(date) {
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -93,9 +98,18 @@ $(document).ready(function () {
     console.log(location_data);
     var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + location_data.lat + "&lon=" + location_data.lon + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7"
     $.getJSON(api_call, function(data) {
+
       console.log("Current weather");
       console.log(data);
 
+      /* Need to deal with this situation when API not responsive.
+        Don't display humidity, wind, sunrise, sunset, F\C. Just say api not responsive, or something.
+      */
+      if (data.hasOwnProperty('cod') && data.cod == '404') {
+        console.log("OOPS");
+        $('#ws_details').html('<div><strong>Current weather data unavailable for location: ' + data.cod + ' ' + data.message + '</strong></div>');
+        return;
+      }
       $("#ws_location").text(location_data.city + ", " + location_data.region + " " + location_data.countryCode);
 
       var currentTemp = data.main.temp;
@@ -107,16 +121,100 @@ $(document).ready(function () {
 
       var timeString;
       if (date.getHours() < 12) {
-        timeString = date.getHours() + ":" + date.getMinutes() + " AM";
+        timeString = date.getHours() + ":" + pad(date.getMinutes()) + " AM";
       } else {
-        timeString = date.getHours()-12 + ":" + date.getMinutes() + " PM";
+        timeString = date.getHours()-12 + ":" + pad(date.getMinutes()) + " PM";
       }
       $("#ws_datetime").text(days[date.getDay()] + " " + timeString);
 
       var weatherDesc = data.weather[0].description;
       $("#wsd").text(weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1));
 
-      $("#ws_icon").addClass("wi-owm-" + data.weather[0].id);
+      var wsIcon =  $('<i>');
+      wsIcon.attr('id', 'ws_icon');
+      wsIcon.addClass('wi');
+      wsIcon.addClass("wi-owm-" + data.weather[0].id);
+      wsIcon.appendTo("#ws_details");
+
+      var outerDiv = $('<div>');
+      var tempInF = $('<div>');
+      tempInF.attr('id', 'ws_temp_f');
+      tempInF.appendTo(outerDiv);
+      var tempInC = $('<div>');
+      tempInC.attr('id', 'ws_temp_c');
+      tempInC.appendTo(outerDiv);
+      var currentUnit = $('<div>');
+      currentUnit.attr('id', 'ws_temp_unit');
+      var fToggle = $('<span>');
+      fToggle.attr('id','ws_temp_f_toggle');
+      fToggle.html('&deg;F');
+      var cToggle = $('<span>');
+      cToggle.attr('id','ws_temp_c_toggle');
+      cToggle.html('&deg;C');
+      currentUnit.html('&nbsp;&nbsp;|&nbsp;&nbsp;');
+      fToggle.prependTo(currentUnit);
+      cToggle.appendTo(currentUnit);
+      currentUnit.appendTo(outerDiv);
+      outerDiv.appendTo("#ws_details");
+
+      var detailsDiv = $('<div>');
+      detailsDiv.attr('id', 'ws_misc_details');
+      var detailsTable = $('<table>');
+      var row = $('<tr>');
+      var cell = $('<td>');
+      cell.text('Humidity');
+      cell.appendTo(row);
+      cell = $('<td>');
+      cell.attr('id', 'ws_humidity');
+      cell.appendTo(row);
+      row.appendTo(detailsTable);
+
+      row = $('<tr>');
+      cell = $('<td>');
+      cell.text('Wind');
+      cell.appendTo(row);
+      cell = $('<td>');
+      var span = $('<span>');
+      span.attr('id', 'ws_wind_icon');
+      span.appendTo(cell);
+      span = $('<span>');
+      span.attr('id', 'ws_wind_stats');
+      span.appendTo(cell);
+      cell.appendTo(row);
+      row.appendTo(detailsTable);
+
+      row = $('<tr>');
+      cell = $('<td>');
+
+      var sunIcon = $('<i>');
+      sunIcon.addClass('wi');
+      sunIcon.addClass('wi-sunrise');
+      sunIcon.attr('data-toggle', 'tooltip');
+      sunIcon.attr('data-original-title', 'Sunrise');
+
+      var sunTime = $('<span>');
+      sunTime.attr('id','ws_sunrise_time');
+
+      sunIcon.appendTo(cell);
+      sunTime.appendTo(cell);
+      cell.appendTo(row);
+
+      cell = $('<td>');
+      var sunIcon = $('<i>');
+      sunIcon.addClass('wi');
+      sunIcon.addClass('wi-sunset');
+      sunIcon.attr('data-toggle', 'tooltip');
+      sunIcon.attr('data-original-title', 'Sunset');
+
+      var sunTime = $('<span>');
+      sunTime.attr('id','ws_sunset_time');
+
+      sunIcon.appendTo(cell);
+      sunTime.appendTo(cell);
+      cell.appendTo(row);
+      row.appendTo(detailsTable);
+      detailsTable.appendTo(detailsDiv);
+      detailsDiv.appendTo("#ws_details");
 
       $("#ws_temp_f").text(Math.round(data.main.temp));
       $("#ws_temp_c").text(convertToCelsius(data.main.temp));
