@@ -3,8 +3,6 @@ body {
   /*background: linear-gradient(to bottom, #325571 0%, #8e9fa4 48%, #decab2 76%, #f2d580 88%, #ffa642 100%);*/
 }
 
-
-
 /* Weather summary */
 #weather_summary {
   width: 40%;
@@ -20,13 +18,9 @@ body {
 #ws_location {
   font-size: 1.7em;
 }
-
 #ws_datetime, #ws_description {
   font-size: 1.2em;
 }
-
-
-
 #ws_details {
   padding-top: 15px;
 }
@@ -47,9 +41,6 @@ body {
   margin-left: 25px;
   display: none;
 }
-#ws_temp_unit {
-
-}
 #ws_temp_f_toggle {
   margin-right: -3px;
   font-weight: bold;
@@ -68,7 +59,6 @@ body {
   margin-top: -20px;
   padding-right: 20px;
 }
-
 #ws_misc_details table tr td {
   padding-right: 10px;
   padding-bottom: 5px;
@@ -84,7 +74,6 @@ body {
   vertical-align: middle;
   display: table-cell;
 }
-
 #ws_misc_details table tr td span#ws_sunrise_time {
   padding-left: 5px;
   display: inline;
@@ -93,7 +82,6 @@ body {
   padding-left: 5px;
   display: inline;
 }
-
 #ws_wind_title {
   padding-right: 5px;
   vertical-align: middle;
