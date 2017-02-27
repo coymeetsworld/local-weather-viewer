@@ -242,25 +242,19 @@ $(document).ready(function () {
 
       //data.sys.sunrise;
       date = new Date(data.sys.sunrise*1000);
-      timeString = (date.getHours() % 12) + ":" + date.getMinutes();
+      timeString = (date.getHours() % 12) + ":";
+      timeString += date.getMinutes() ? date.getMinutes() : '00';
       if (date.getHours() < 12) { timeString += " AM"; }
       else { timeString += " PM" }
-      console.log("TIMESTRING: " + timeString);
       $("#ws_sunrise_time").text(timeString);
 
       //data.sys.sunset;
       date = new Date(data.sys.sunset*1000);
-      timeString = (date.getHours() % 12) + ":" + date.getMinutes();
+      timeString = (date.getHours() % 12) + ":";
+      timeString += date.getMinutes() ? date.getMinutes() : '00';
       if (date.getHours() < 12) { timeString += " AM"; }
       else { timeString += " PM" }
       $("#ws_sunset_time").text(timeString);
-      /*cell.addClass("highLows");
-      cell.html("<span class=\"high\">" + weatherObj.temp.max + "</span> / <span class=\"low\">" + weatherObj.temp.min + "</span>");
-      cell.appendTo(weather_row);
-      */
-
-      //$(weather_table).prependTo("#weather_summary");
-
     });
   }
 
