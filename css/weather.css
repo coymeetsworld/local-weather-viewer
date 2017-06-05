@@ -216,57 +216,38 @@ body {
 }
 
 /* Fog, cloudy, storm-showers*/
-,.wi-owm-741,.wi-owm-531,.wi-owm-801,.wi-owm-804 {
+.wi-owm-741,.wi-owm-801,.wi-owm-804 {
   color: gray;
 }
+
 /* Lightning, thunderstorms */
-.wi-owm-200, .wi-owm-201, .wi-owm-202, .wi-owm-210, .wi-owm-211, .wi-owm-212, .wi-owm-221, .wi-owm-230, .wi-owm-231, .wi-owm-232{
+.wi-owm-200, .wi-owm-201, .wi-owm-221, .wi-owm-230, .wi-owm-232 {
   color: #FF00AA;
 }
+
 /* sprinkle, showers, rain-mix, mist */
-.wi-owm-300, .wi-owm-301, .wi-owm-310, .wi-owm-313, .wi-owm-321, .wi-owm-500, .wi-owm-520, .wi-owm-521, .wi-owm-701 {
+.wi-owm-300, .wi-owm-301 {
   color: LightSkyBlue;
 }
-/* rain */
-.wi-owm-302, .wi-owm-311, {
-  color: SkyBlue;
-}
+
 /* heavier rain, cold */
-.wi-owm-302, .wi-owm-311, .wi-owm-312, .wi-owm-314, .wi-owm-501, .wi-owm-502, .wi-owm-503, .wi-owm-504, .wi-owm-522, .wi-owm-531, .wi-owm-901, .wi-owm-903 {
+.wi-owm-302, .wi-owm-501, .wi-owm-502, .wi-owm-522, .wi-owm-901 {
   color: RoyalBlue;
 }
 
 /* Snow, freezing */
-.wi-owm-511, .wi-owm-600, .wi-owm-601, .wi-owm-602, .wi-owm-615, .wi-owm-616, .wi-owm-620, .wi-owm-621, .wi-owm-622 {
+.wi-owm-511, .wi-owm-600, .wi-owm-601, .wi-owm-602, .wi-owm-620, .wi-owm-621 {
   color: cyan;
 }
+
 /* Sleet */
 .wi-owm-611, .wi-owm-612 {
   color: LightSlateGray;
 }
-/* Smoke, Volcanic Ash */
-.wi-owm-711, .wi-owm-762 {
-  color: black;
-}
-/* Day-haze */
-.wi-owm-721 {
-  color: orange;
-}
-/* Dust */
-.wi-owm-731, .wi-owm-751, .wi-owm-761 {
-  color: tan;
-}
-/* Tornado */
-.wi-owm-781, .wi-owm-900 {
-  color: purple;
-}
+
 /* Sunny */
 .wi-owm-800 {
   color: gold;
-}
-/* hot */
-.wi-owm-904 {
-  color: red;
 }
 
 /* hail, fog*/
@@ -274,13 +255,10 @@ body {
   color: LightGray;
 }
 
-.wi-owm-801, .wi-owm-802, .wi-owm-803, .wi-owm-804 {
+.wi-owm-801, .wi-owm-804 {
   color: Gray;
 }
-/* Gusts, Windy, Strong wind */
-.wi-owm-771, .wi-owm-905, .wi-owm-957 {
-  color: lime;
-}
+
 /* Wind direction icons. */
 .wi.wi-wind {
   color: #000;
