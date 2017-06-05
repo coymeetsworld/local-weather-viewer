@@ -220,19 +220,6 @@ body {
   font-size: 1em;
 }
 
-#myModalAbout {
-  color: black;
-}
-
-.modal-body .row {
-  margin: auto;
-}
-
-#myModalAbout h1 {
-  font-size: 2em;
-  text-align: center;
-}
-
 /* Weather Icon coloring */
 /* Overrides to change colors of weather icons. */
 .wi {
