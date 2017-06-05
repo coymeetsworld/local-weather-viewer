@@ -4,89 +4,107 @@ body {
 }
 
 /* Weather summary */
-#weather_summary {
-  width: 40%;
-  margin-left: 14%;
-  margin-top: 80px;
-  margin-bottom: 35px;
+#weather-summary {
+  background-color: #FFF;
   border: 1px solid #000;
   border-radius: 5px;
-  background-color: #FFF;
-  padding: 5px;
   color: black;
+  margin-bottom: 35px;
+  margin-left: 14%;
+  margin-top: 80px;
+  padding: 5px;
+  width: 40%;
 }
-#ws_location {
+
+#ws-location {
   font-size: 1.7em;
 }
-#ws_datetime, #ws_description {
+
+#ws-datetime, #ws-description {
   font-size: 1.2em;
 }
-#ws_details {
+
+#ws-details {
   padding-top: 15px;
 }
-#ws_icon {
+
+#ws-icon {
   float: left;
   font-size: 4em;
 }
-#ws_temp_f {
+
+#ws-temp-f {
   float: left;
   font-size: 5em;
   margin-top: -20px;
   margin-left: 25px;
 }
-#ws_temp_c {
-  float: left;
-  font-size: 5em;
-  margin-top: -20px;
-  margin-left: 25px;
+
+#ws-temp-c {
   display: none;
+  float: left;
+  font-size: 5em;
+  margin-top: -20px;
+  margin-left: 25px;
 }
-#ws_temp_f_toggle {
-  margin-right: -3px;
+
+#ws-temp-f-toggle {
   font-weight: bold;
+  margin-right: -3px;
 }
-#ws_temp_f_toggle:hover {
+
+#ws-temp-f-toggle:hover {
   cursor: pointer;
 }
-#ws_temp_c_toggle {
+
+#ws-temp-c-toggle {
   margin-left: -5px;
 }
-#ws_temp_c_toggle:hover {
+
+#ws-temp-c-toggle:hover {
   cursor: pointer;
 }
-#ws_misc_details {
+
+#ws-misc-details {
   float: right;
   margin-top: -20px;
   padding-right: 20px;
 }
-#ws_misc_details table tr td {
-  padding-right: 10px;
+
+#ws-misc-details table tr td {
   padding-bottom: 5px;
+  padding-right: 10px;
   vertical-align: middle;
 }
-#ws_misc_details table tr td span {
+
+#ws-misc-details table tr td span {
+  display: table-cell;
   padding-right: 5px;
   vertical-align: middle;
-  display: table-cell;
 }
-#ws_misc_details table tr td span i {
+
+#ws-misc-details table tr td span i {
+  display: table-cell;
   font-size: 1.4em;
   vertical-align: middle;
-  display: table-cell;
 }
-#ws_misc_details table tr td span#ws_sunrise_time {
-  padding-left: 5px;
+
+#ws-misc-details table tr td span#ws-sunrise-time {
   display: inline;
-}
-#ws_misc_details table tr td span#ws_sunset_time {
   padding-left: 5px;
-  display: inline;
 }
-#ws_wind_title {
+
+#ws-misc-details table tr td span#ws-sunset-time {
+  display: inline;
+  padding-left: 5px;
+}
+
+#ws-wind-title {
   padding-right: 5px;
   vertical-align: middle;
 }
-#ws_wind_stats {
+
+#ws-wind-stats {
   margin-left: -5px;
   vertical-align: middle;
 }
@@ -95,111 +113,117 @@ body {
 
 /* Weather Forecast */
 
-#weather_forecast {
+#weather-forecast {
   margin: auto;
-  width: 85%;
   margin-bottom: 80px;
-
+  width: 85%;
 }
 
-.weather_table {
+.weather-table {
   background-color: #FFF;
   color: black;
   margin: auto;
   width: 85%;
-
 }
 
-#HighLowColumn {
+#high-low-col {
   width: 20%;
 }
-#HighLowColumn:hover {
+
+#high-low-col:hover {
   background-color: #DDD;
   cursor: pointer;
 }
 
-.weather_table th {
+.weather-table th {
   padding: 7px 0 6px 10px;
 }
-.weather_table tr {
+
+.weather-table tr {
   border: 1px solid black;
 }
-.weather_table td {
+
+.weather-table td {
   padding: 5px 0 5px 10px;
-  /*border: 1px solid black; */
 }
 
-.weather_table td p {
+.weather-table td p {
   font-size: 0.8em;
   margin: 0;
 }
-.weather_table td.highLows span {
+
+.weather-table td.high-lows span {
   display: inline;
   padding-left: 0;
 }
 
-.weather_table td.highLows span.hlc {
+.weather-table td.high-lows span.hlc {
   display: none;
 }
 
-.weather_table td.highLows span span.high {
+.weather-table td.high-lows span span.high {
   font-size: 1.2em;
 }
-.weather_table td.highLows span span.slash {
-  display: inline-block;
-  margin: 0 2px 0 6px;
-  height: 17px;
+
+.weather-table td.high-lows span span.slash {
   border-right: 1px solid #555;
+  display: inline-block;
+  height: 17px;
+  margin: 0 2px 0 6px;
+  position: relative;
   transform: skewX(-35deg);
-  position: relative;
 }
-.weather_table td.highLows span span.low {
-  position: relative;
+
+.weather-table td.high-lows span span.low {
   bottom: -8px;
-  margin-left: 2px;
   color: #888;
+  margin-left: 2px;
+  position: relative;
 }
-.weather_table td p.dayName {
+
+.weather-table td p.dayName {
   font-weight: bold;
   font-size: 0.7em;
-  text-transform: uppercase;
   margin-bottom: 3px;
+  text-transform: uppercase;
 }
 
-.weather_table td i {
-  font-size: 1.7em;
+.weather-table td i {
   display: table-cell;
+  font-size: 1.7em;
 }
 
-.weather_table td span {
+.weather-table td span {
+  display: table-cell;
   padding: 0 0 0 15px;
   vertical-align: middle;
-  display: table-cell;
 }
 
-.weather_table td span.wind-icon {
+.weather-table td span.wind-icon {
+  display: table-cell;
   padding: 0;
   vertical-align: middle;
-  display: table-cell;
 }
 
 /* End Weather Forecast */
 
 /* About section */
 #about {
-  width: 85%;
   margin: auto;
   padding-top: 7px;
   text-align: right;
+  width: 85%;
 }
+
 #about a {
-  font-size: 1em;
   color: white;
+  font-size: 1em;
 }
 
 #myModalAbout {
   color: black;
 }
+
 .modal-body .row {
   margin: auto;
 }
@@ -216,32 +240,49 @@ body {
 }
 
 /* Fog, cloudy, storm-showers*/
-.wi-owm-741,.wi-owm-801,.wi-owm-804 {
+.wi-owm-741,
+.wi-owm-801,
+.wi-owm-804 {
   color: gray;
 }
 
 /* Lightning, thunderstorms */
-.wi-owm-200, .wi-owm-201, .wi-owm-221, .wi-owm-230, .wi-owm-232 {
+.wi-owm-200,
+.wi-owm-201,
+.wi-owm-221,
+.wi-owm-230,
+.wi-owm-232 {
   color: #FF00AA;
 }
 
 /* sprinkle, showers, rain-mix, mist */
-.wi-owm-300, .wi-owm-301 {
+.wi-owm-300,
+.wi-owm-301 {
   color: LightSkyBlue;
 }
 
 /* heavier rain, cold */
-.wi-owm-302, .wi-owm-501, .wi-owm-502, .wi-owm-522, .wi-owm-901 {
+.wi-owm-302,
+.wi-owm-501,
+.wi-owm-502,
+.wi-owm-522,
+.wi-owm-901 {
   color: RoyalBlue;
 }
 
 /* Snow, freezing */
-.wi-owm-511, .wi-owm-600, .wi-owm-601, .wi-owm-602, .wi-owm-620, .wi-owm-621 {
+.wi-owm-511,
+.wi-owm-600,
+.wi-owm-601,
+.wi-owm-602,
+.wi-owm-620,
+.wi-owm-621 {
   color: cyan;
 }
 
 /* Sleet */
-.wi-owm-611, .wi-owm-612 {
+.wi-owm-611,
+.wi-owm-612 {
   color: LightSlateGray;
 }
 
@@ -250,12 +291,14 @@ body {
   color: gold;
 }
 
-/* hail, fog*/
-.wi-owm-741, .wi-owm-906 {
+/* hail, fog */
+.wi-owm-741,
+.wi-owm-906 {
   color: LightGray;
 }
 
-.wi-owm-801, .wi-owm-804 {
+.wi-owm-801,
+.wi-owm-804 {
   color: Gray;
 }
 
@@ -264,6 +307,7 @@ body {
   color: #000;
 }
 
-.wi-sunrise, .wi-sunset {
+.wi-sunrise,
+.wi-sunset {
   color: #000;
 }

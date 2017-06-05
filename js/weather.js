@@ -53,14 +53,13 @@ $(document).ready(function () {
     }
 
     /* Else return day name */
-    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    return days[date.getDay()];
+    return DAY_NAMES[date.getDay()];
   }
 
   /* Put padded 0s in formatted time. */
   function pad(n) {
     return (n < 10) ? ("0" + n) : n;
-}
+  }
 
   function convertUTCDateToLocalDate(date) {
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -81,7 +80,7 @@ $(document).ready(function () {
     var header = $("<th>");
     header.html("Day");
     header.appendTo(row);
-    header = $("<th id=\"HighLowColumn\">");
+    header = $("<th id=\"high-low-col\">");
     header.html("High/Low F&deg;");
     header.appendTo(row);
     header = $("<th>");
@@ -98,7 +97,7 @@ $(document).ready(function () {
   }
 
   const displayCurrentLocation = (location) => {
-    $("#ws_location").text(`${location.name}, ${location.region} `);
+    $("#ws-location").text(`${location.name}, ${location.region} `);
   }
 
   /* Displays most recent update time to weather */
@@ -107,7 +106,7 @@ $(document).ready(function () {
       let timeString;
       if (date.getHours() < 12) timeString = pad(date.getHours()) + ":" + pad(date.getMinutes()) + " AM";
       else                      timeString = pad(date.getHours()-12) + ":" + pad(date.getMinutes()) + " PM";
-      $("#ws_datetime").text(DAY_NAMES[date.getDay()] + " " + timeString);
+      $("#ws-datetime").text(DAY_NAMES[date.getDay()] + " " + timeString);
   }
 
   const displayCurrentWeatherDescription = (weatherDesc) => {
@@ -208,10 +207,10 @@ $(document).ready(function () {
 
   const displayCurrentWeatherIcon = (code) => {
     let wsIcon =  $('<i>');
-    wsIcon.attr('id', 'ws_icon');
+    wsIcon.attr('id', 'ws-icon');
     wsIcon.addClass('wi');
     wsIcon.addClass("wi-owm-" + convertWeatherCode(code)); //TODO need to convert
-    wsIcon.appendTo("#ws_details");
+    wsIcon.appendTo("#ws-details");
   }
 
   const displayHumidity = (humidity, detailsTable) => {
@@ -221,7 +220,7 @@ $(document).ready(function () {
     cell.text('Humidity');
     cell.appendTo(row);
     cell = $('<td>');
-    cell.attr('id', 'ws_humidity');
+    cell.attr('id', 'ws-humidity');
     cell.text(humidity + "%");
     cell.appendTo(row);
     row.appendTo(detailsTable);
@@ -236,12 +235,12 @@ $(document).ready(function () {
     cell.appendTo(row);
     cell = $('<td>');
     var span = $('<span>');
-    span.attr('id', 'ws_wind_icon');
+    span.attr('id', 'ws-wind-icon');
     windArray[0].appendTo(span);
 
     span.appendTo(cell);
     span = $('<span>');
-    span.attr('id', 'ws_wind_stats');
+    span.attr('id', 'ws-wind-stats');
     span.appendTo(cell);
     cell.appendTo(row);
     row.appendTo(detailsTable);
@@ -257,7 +256,7 @@ $(document).ready(function () {
       sunIcon.attr('data-toggle', 'tooltip');
       sunIcon.attr('data-original-title', 'Sunrise');
       let sunTime = $('<span>');
-      sunTime.attr('id','ws_sunrise_time');
+      sunTime.attr('id','ws-sunrise-time');
 
       sunIcon.appendTo(cell);
       sunTime.appendTo(cell);
@@ -271,7 +270,7 @@ $(document).ready(function () {
       sunIcon.attr('data-original-title', 'Sunset');
 
       sunTime = $('<span>');
-      sunTime.attr('id','ws_sunset_time');
+      sunTime.attr('id','ws-sunset-time');
 
       sunIcon.appendTo(cell);
       sunTime.appendTo(cell);
@@ -283,22 +282,22 @@ $(document).ready(function () {
     let outerDiv = $('<div>');
 
     let tempInF = $('<div>');
-    tempInF.attr('id', 'ws_temp_f');
+    tempInF.attr('id', 'ws-temp-f');
     tempInF.appendTo(outerDiv);
 
     let tempInC = $('<div>');
-    tempInC.attr('id', 'ws_temp_c');
+    tempInC.attr('id', 'ws-temp-c');
     tempInC.appendTo(outerDiv);
 
     let currentUnit = $('<div>');
-    currentUnit.attr('id', 'ws_temp_unit');
+    currentUnit.attr('id', 'ws-temp-unit');
 
     let fToggle = $('<span>');
-    fToggle.attr('id','ws_temp_f_toggle');
+    fToggle.attr('id','ws-temp-f-toggle');
     fToggle.html('&deg;F');
 
     let cToggle = $('<span>');
-    cToggle.attr('id','ws_temp_c_toggle');
+    cToggle.attr('id','ws-temp-c-toggle');
     cToggle.html('&deg;C');
 
     currentUnit.html('&nbsp;&nbsp;|&nbsp;&nbsp;');
@@ -307,7 +306,7 @@ $(document).ready(function () {
     cToggle.appendTo(currentUnit);
 
     currentUnit.appendTo(outerDiv);
-    outerDiv.appendTo("#ws_details");
+    outerDiv.appendTo("#ws-details");
   }
 
   //NEED a way to get current temperature
@@ -326,7 +325,7 @@ $(document).ready(function () {
       // Error format: {"error":{"code":1005,"message":"API URL is invalid."}}
       if (data.hasOwnProperty("error")) {
         console.log(`Error: ${data.error.code}: ${data.error.message}`);
-        $("#ws_details").html(`<div><strong>Current weather data unavailable for location: ${data.error.code}: ${data.error.message} </strong></div>`);
+        $("#ws-details").html(`<div><strong>Current weather data unavailable for location: ${data.error.code}: ${data.error.message} </strong></div>`);
         return;
       }
       displayCurrentLocation(data.location); // City, Region
@@ -336,7 +335,7 @@ $(document).ready(function () {
       createTemperatureToggle(); // Create C | F section to toggle weather measurement.
 
       var detailsDiv = $('<div>');
-      detailsDiv.attr('id', 'ws_misc_details');
+      detailsDiv.attr('id', 'ws-misc-details');
       var detailsTable = $('<table>');
 
       displayHumidity(data.current.humidity, detailsTable);
@@ -344,24 +343,23 @@ $(document).ready(function () {
       displaySunriseAndSunset(detailsTable);
 
       detailsTable.appendTo(detailsDiv);
-      detailsDiv.appendTo("#ws_details");
+      detailsDiv.appendTo("#ws-details");
 
-      $("#ws_temp_f").text(Math.round(data.current.temp_f));
-      $("#ws_temp_c").text(Math.round(data.current.temp_c));
+      $("#ws-temp-f").text(Math.round(data.current.temp_f));
+      $("#ws-temp-c").text(Math.round(data.current.temp_c));
 
-      $("#ws_temp_f_toggle").click(function() {
+      $("#ws-temp-f-toggle").click(function() {
         console.log("F click");
-        $("#ws_temp_c").css('display','none');
-        $("#ws_temp_f").css('display','inline');
-        $("#ws_temp_f_toggle").css('font-weight', 'bold');
-        $("#ws_temp_c_toggle").css('font-weight', 'normal');
+        $("#ws-temp-c").css('display','none');
+        $("#ws-temp-f").css('display','inline');
+        $("#ws-temp-f-toggle").css('font-weight', 'bold');
+        $("#ws-temp-c-toggle").css('font-weight', 'normal');
       });
-      $("#ws_temp_c_toggle").click(function() {
-        console.log("C click");
-        $("#ws_temp_c").css('display','inline');
-        $("#ws_temp_f").css('display','none');
-        $("#ws_temp_f_toggle").css('font-weight', 'normal');
-        $("#ws_temp_c_toggle").css('font-weight', 'bold');
+      $("#ws-temp-c-toggle").click(function() {
+        $("#ws-temp-c").css('display','inline');
+        $("#ws-temp-f").css('display','none');
+        $("#ws-temp-f-toggle").css('font-weight', 'normal');
+        $("#ws-temp-c-toggle").css('font-weight', 'bold');
       });
 
     });
@@ -378,7 +376,7 @@ $(document).ready(function () {
 
   const createHighLowCol = (dayData) => {
     let hlCol = $("<td>");
-    hlCol.addClass("highLows");
+    hlCol.addClass("high-lows");
     hlCol.html("<span class=\"hlf\"><span class=\"high\">" + Math.round(dayData.maxtemp_f) + "</span><span class=\"slash\"></span><span class=\"low\">" + Math.round(dayData.mintemp_f) + "</span></span>");
     hlCol.append("<span class=\"hlc\"><span class=\"high\">" + Math.round(dayData.maxtemp_c) + "</span><span class=\"slash\"></span><span class=\"low\">" + Math.round(dayData.mintemp_c) + "</span></span>");
     return hlCol;
@@ -433,10 +431,10 @@ $(document).ready(function () {
       //console.log(data);
 
       // in main panel, getting sunrise and sunset from forecast (not in other api call).
-      $("#ws_sunrise_time").text(data.forecast.forecastday[0].astro.sunrise);
-      $("#ws_sunset_time").text(data.forecast.forecastday[0].astro.sunset);
+      $("#ws-sunrise-time").text(data.forecast.forecastday[0].astro.sunrise);
+      $("#ws-sunset-time").text(data.forecast.forecastday[0].astro.sunset);
 
-      var weather_table = $('<table class="weather_table">');
+      var weather_table = $('<table class="weather-table">');
 
       $(createTableHeader()).appendTo(weather_table);
 
@@ -444,21 +442,21 @@ $(document).ready(function () {
         $(createWeatherRow(forecastData)).appendTo(weather_table);;
       })
 
-      $(weather_table).prependTo("#weather_forecast");
+      $(weather_table).prependTo("#weather-forecast");
 
       $('[data-toggle="tooltip"]').tooltip(); // enable tooltips by hovering over wind direction icon.
 
       /* Needs to be after weather_table added to weather_forecast*/
-      $("th#HighLowColumn").click(function() {
-        var currentUnit = $("#HighLowColumn").text().substr(-2,1); //High/Low Column reads "High/Low [F\C]&deg;";
+      $("th#high-low-col").click(function() {
+        var currentUnit = $("#high-low-col").text().substr(-2,1); //High/Low Column reads "High/Low [F\C]&deg;";
         if (currentUnit == 'F') {
           $(".hlc").css('display','inline');
           $(".hlf").css('display','none');
-          $("#HighLowColumn").html($("#HighLowColumn").text().slice(0,-2) + "C&deg;");
+          $("#high-low-col").html($("#high-low-col").text().slice(0,-2) + "C&deg;");
         } else if (currentUnit == 'C') {
           $(".hlc").css('display','none');
           $(".hlf").css('display','inline');
-          $("#HighLowColumn").html($("#HighLowColumn").text().slice(0,-2) + "F&deg;");
+          $("#high-low-col").html($("#high-low-col").text().slice(0,-2) + "F&deg;");
         } else {
           console.log("ERROR: Expected F or C but got " + currentUnit);
         }
