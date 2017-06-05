@@ -275,6 +275,61 @@ $(document).ready(function () {
     });
   }
 
+  const createDateCol = (date) => {
+    let dateCol = $("<td>");
+    date = new Date(date);
+    stringDate = convertUTCDateToLocalDate(date);
+    dayName = getDayName(date);
+    dateCol.html("<p class=\"dayName\">" + dayName + "</p><p>" + stringDate + "</p>");
+    return dateCol;
+  }
+
+  const createHighLowCol = (dayData) => {
+    let hlCol = $("<td>");
+    hlCol.addClass("highLows");
+    hlCol.html("<span class=\"hlf\"><span class=\"high\">" + Math.round(dayData.maxtemp_f) + "</span><span class=\"slash\"></span><span class=\"low\">" + Math.round(dayData.mintemp_f) + "</span></span>");
+    hlCol.append("<span class=\"hlc\"><span class=\"high\">" + Math.round(dayData.maxtemp_c) + "</span><span class=\"slash\"></span><span class=\"low\">" + Math.round(dayData.mintemp_c) + "</span></span>");
+    return hlCol;
+  }
+
+  const createDescriptionCol = (conditionData) => {
+    let descCol = $("<td>");
+    let weather_icon = $("<i>");
+    weather_icon.addClass("wi");
+    weather_icon.addClass("wi-owm-"+conditionData.code);
+    weather_icon.appendTo(descCol);
+
+    let weather_desc = $("<span>");
+    weather_desc.html(conditionData.text);
+    weather_desc.appendTo(descCol);
+    return descCol;
+  }
+
+  const createWindCol = (hourData) => {
+    let windCol = $("<td>");
+    let windArray = getWindStats(hourData.wind_dir, hourData.wind_mph); //change it to same time of day?
+    windArray[0].appendTo(windCol);
+    windArray[1].appendTo(windCol);
+    return windCol;
+  }
+
+  const createHumidityCol = (humidity) => {
+    let humidityCell = $('<td>');
+    humidityCell.html(humidity + "%");
+    return humidityCell;
+  }
+
+  const createWeatherRow = (forecastData) => {
+    let weatherRow = $("<tr>");
+    $(createDateCol(forecastData.date)).appendTo(weatherRow);
+    $(createHighLowCol(forecastData.day)).appendTo(weatherRow);
+    $(createDescriptionCol(forecastData.day.condition)).appendTo(weatherRow);
+    $(createWindCol(forecastData.hour[12])).appendTo(weatherRow);
+    $(createHumidityCol(forecastData.day.avghumidity)).appendTo(weatherRow);
+    return weatherRow;
+
+  }
+
   function getForecast(lat, lon) {
 
     let apiCall = `https://api.apixu.com/v1/forecast.json?key=6dd018b75b9c4b698c2233231170406&q=${lat},${lon}&days=10`;
@@ -284,7 +339,7 @@ $(document).ready(function () {
       console.log("Data");
       console.log(data);
 
-      // in main panel
+      // in main panel, getting sunrise and sunset from forecast (not in other api call).
       $("#ws_sunrise_time").text(data.forecast.forecastday[0].astro.sunrise);
       $("#ws_sunset_time").text(data.forecast.forecastday[0].astro.sunset);
 
@@ -292,60 +347,10 @@ $(document).ready(function () {
 
       $(createTableHeader()).appendTo(weather_table);
 
+      data.forecast.forecastday.map((forecastData) => {
+        $(createWeatherRow(forecastData)).appendTo(weather_table);;
+      })
 
-      var weatherObj, date, stringDate, dayName, wind_cardinal_direction;
-      var weather_row, cell, weather_icon, weather_desc;
-      for (var i = 0; i < 10; i++) {
-        weatherObj = data.forecast.forecastday[i];
-
-        weather_row = $('<tr>');
-        cell = $('<td>');
-
-        console.log(weatherObj);
-        date = new Date(weatherObj.date);
-        //date = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
-
-        //console.log("DATE: " + date);
-        stringDate = convertUTCDateToLocalDate(date);
-        //console.log("Date: " + stringDate);
-        dayName = getDayName(date);
-        //console.log("DayName: " + dayName);
-
-        //console.log("Date Locale: " + stringDate.toLocaleString());
-        cell.html("<p class=\"dayName\">" + dayName + "</p><p>" + stringDate + "</p>");
-        cell.appendTo(weather_row);
-
-        cell = $('<td>');
-        cell.addClass("highLows");
-        cell.html("<span class=\"hlf\"><span class=\"high\">" + Math.round(weatherObj.day.maxtemp_f) + "</span><span class=\"slash\"></span><span class=\"low\">" + Math.round(weatherObj.day.mintemp_f) + "</span></span>");
-        cell.append("<span class=\"hlc\"><span class=\"high\">" + Math.round(weatherObj.day.maxtemp_c) + "</span><span class=\"slash\"></span><span class=\"low\">" + Math.round(weatherObj.day.mintemp_c) + "</span></span>");
-
-
-        cell.appendTo(weather_row);
-
-        cell = $('<td>');
-        weather_icon = $('<i>');
-        weather_icon.addClass("wi");
-        weather_icon.addClass("wi-owm-"+weatherObj.day.condition.code);
-        weather_icon.appendTo(cell);
-
-        weather_desc = $('<span>');
-        weather_desc.html(weatherObj.day.condition.text);
-        weather_desc.appendTo(cell);
-        cell.appendTo(weather_row);
-
-        cell = $('<td>');
-        var windArray = getWindStats(weatherObj.hour[12].wind_dir, weatherObj.hour[12].wind_mph); //change it to same time of day?
-        windArray[0].appendTo(cell);
-        windArray[1].appendTo(cell);
-        cell.appendTo(weather_row);
-
-        cell = $('<td>');
-        cell.html(weatherObj.day.avghumidity + "%");
-        cell.appendTo(weather_row);
-
-        $(weather_row).appendTo(weather_table);
-      }
       $(weather_table).prependTo("#weather_forecast");
 
       $('[data-toggle="tooltip"]').tooltip(); // enable tooltips by hovering over wind direction icon.
@@ -364,8 +369,6 @@ $(document).ready(function () {
         } else {
           console.log("ERROR: Expected F or C but got " + currentUnit);
         }
-
-
       });
 
     }).fail(function (jqXHR, textStatus, errorThrown) {
