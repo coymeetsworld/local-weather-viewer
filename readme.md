@@ -21,19 +21,19 @@ For the 10-day forecast Local Weather Viewer provides the following:
 
 This application makes the following api calls:
 
-*[geolocation](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/getCurrentPosition) - Obtains the location of the user. This data will be sent into the weather API calls to get local weather data.
+* [geolocation](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/getCurrentPosition) - Obtains the location of the user. This data will be sent into the weather API calls to get local weather data.
 
-*[current weather](https://www.apixu.com/doc/current.aspx) - gets the current weather data.
+* [current weather](https://www.apixu.com/doc/current.aspx) - gets the current weather data.
 
-*[10-day forecast](https://www.apixu.com/doc/forecast.aspx) - gets the 10-day forecast of data.
+* [10-day forecast](https://www.apixu.com/doc/forecast.aspx) - gets the 10-day forecast of data.
 
 ## Live Demo
+
+https://coymeetsworld.github.io/local-weather-viewer
 
 <div align="center">
   <img src="imgs/preview-imgs/preview.png" alt="Preview image of Local Weather Viewer"/>
 </div>
-
-https://coymeetsworld.github.io/local-weather-viewer
 
 ## About
 
