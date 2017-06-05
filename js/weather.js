@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-  function getWindStats(degrees, speed) {
+  function getWindStatsBakcup(degrees, speed) {
     var cardinalDirectionMap=["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
     var roundedDegree = Math.round((degrees/22.5)+.5);
     var cardinalDirection = cardinalDirectionMap[roundedDegree % 16];
@@ -22,6 +22,25 @@ $(document).ready(function () {
     return [spanIcon, spanStats];
   }
 
+  function getWindStats(direction, speed) {
+    var cardinalDirectionIcon = $('<i>');
+    cardinalDirectionIcon.addClass("wi");
+    cardinalDirectionIcon.addClass("wi-wind");
+    cardinalDirectionIcon.addClass("wi-towards-" + direction.toLowerCase());
+    cardinalDirectionIcon.attr('data-toggle', 'tooltip');
+    cardinalDirectionIcon.attr('title', direction);
+
+    var spanIcon = $('<span>');
+    spanIcon.addClass("wind-icon");
+    cardinalDirectionIcon.prependTo(spanIcon);
+
+    var spanStats = $('<span>');
+    spanStats.addClass("wind-stats");
+    spanStats.text(speed + " MPH");
+
+    return [spanIcon, spanStats];
+  }
+
   function getDayName(date) {
     //console.log("Calling getDayName");
     //console.log("Date: " + date);
@@ -30,6 +49,7 @@ $(document).ready(function () {
     var todaysDate = new Date();
     //console.log("Todays Date: " + todaysDate);
     //var utc = todaysDate.getTime() + (todaysDate.getTimezoneOffset() * 60000);
+    todaysDate = new Date(todaysDate.getTime()+todaysDate.getTimezoneOffset()*60*1000);
     //var todaysDateUTC = new Date(utc);
     //console.log("todaysDateUTC: " + todaysDateUTC);
     //if (date.setHours(0,0,0,0) == todaysDateUTC.setHours(0,0,0,0)) {
@@ -50,10 +70,6 @@ $(document).ready(function () {
     return days[date.getDay()];
   }
 
-  function convertToCelsius(fahrenheit) {
-    return Math.round(((fahrenheit - 32) / 1.8));
-  }
-
   /* Put padded 0s in formatted time. */
   function pad(n) {
     return (n < 10) ? ("0" + n) : n;
@@ -62,12 +78,14 @@ $(document).ready(function () {
   function convertUTCDateToLocalDate(date) {
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
-      var offset = date.getTimezoneOffset() / 60;
-      var hours = date.getHours();
-      newDate.setHours(hours - offset);
-      //console.log(monthNames[newDate.getMonth()] + " " + newDate.getDate());
-      return monthNames[newDate.getMonth()] + " " + newDate.getDate();
+    //console.log(date.getTime());
+    //console.log(date.getTimezoneOffset());
+    var newDate = new Date(date.getTime());
+    var offset = date.getTimezoneOffset() / 60;
+    var hours = date.getHours();
+    newDate.setHours(hours - offset);
+    //console.log(monthNames[newDate.getMonth()] + " " + newDate.getDate());
+    return monthNames[newDate.getMonth()] + " " + newDate.getDate();
   }
 
   function createTableHeader() {
@@ -94,10 +112,10 @@ $(document).ready(function () {
 
 
   //NEED a way to get current temperature
-  function getCurrentWeather(location_data) {
-    console.log(location_data);
-    var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + location_data.lat + "&lon=" + location_data.lon + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7"
-    $.getJSON(api_call, function(data) {
+  function getCurrentWeather(lat, lon) {
+    let apiCall = `https://api.apixu.com/v1/current.json?key=6dd018b75b9c4b698c2233231170406&q=${lat},${lon}`;
+
+    $.getJSON(apiCall, function(data) {
 
       console.log("Current weather");
       console.log(data);
@@ -105,18 +123,23 @@ $(document).ready(function () {
       /* Need to deal with this situation when API not responsive.
         Don't display humidity, wind, sunrise, sunset, F\C. Just say api not responsive, or something.
       */
-      if (data.hasOwnProperty('cod') && data.cod == '404') {
-        console.log("OOPS");
-        $('#ws_details').html('<div><strong>Current weather data unavailable for location: ' + data.cod + ' ' + data.message + '</strong></div>');
+
+      // Error format: {"error":{"code":1005,"message":"API URL is invalid."}}
+
+      if (data.hasOwnProperty("error")) {
+        console.log(`Error: ${data.error.code}: ${data.error.message}`);
+        $("#ws_details").html(`<div><strong>Current weather data unavailable for location: ${data.error.code}: ${data.error.message} </strong></div>`);
         return;
       }
-      $("#ws_location").text(location_data.city + ", " + location_data.region + " " + location_data.countryCode);
+      
+      $("#ws_location").text(`${data.location.name}, ${data.location.region} `);
 
-      var currentTemp = data.main.temp;
-      var currentHumidity = data.main.humidity;
-      var weatherIconId = data.weather[0].id;
+      var currentTemp = data.current.temp_f;
+      var currentHumidity = data.current.humidity;
+      var weatherIconId = data.current.condition.code;
 
-      date = new Date(data.dt*1000);
+      //console.log(data.location.localtime_epoch*1000);
+      date = new Date(data.location.localtime_epoch*1000);
       var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
       var timeString;
@@ -127,13 +150,13 @@ $(document).ready(function () {
       }
       $("#ws_datetime").text(days[date.getDay()] + " " + timeString);
 
-      var weatherDesc = data.weather[0].description;
+      var weatherDesc = data.current.condition.text;
       $("#wsd").text(weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1));
 
       var wsIcon =  $('<i>');
       wsIcon.attr('id', 'ws_icon');
       wsIcon.addClass('wi');
-      wsIcon.addClass("wi-owm-" + data.weather[0].id);
+      wsIcon.addClass("wi-owm-" + weatherIconId); //TODO need to convert
       wsIcon.appendTo("#ws_details");
 
       var outerDiv = $('<div>');
@@ -216,8 +239,8 @@ $(document).ready(function () {
       detailsTable.appendTo(detailsDiv);
       detailsDiv.appendTo("#ws_details");
 
-      $("#ws_temp_f").text(Math.round(data.main.temp));
-      $("#ws_temp_c").text(convertToCelsius(data.main.temp));
+      $("#ws_temp_f").text(Math.round(data.current.temp_f));
+      $("#ws_temp_c").text(Math.round(data.current.temp_c));
 
       $("#ws_temp_f_toggle").click(function() {
         console.log("F click");
@@ -234,44 +257,27 @@ $(document).ready(function () {
         $("#ws_temp_c_toggle").css('font-weight', 'bold');
       });
 
-      $("#ws_humidity").text(data.main.humidity + "%");
+      $("#ws_humidity").text(data.current.humidity + "%");
 
-      var windArray = getWindStats(data.wind.deg, data.wind.speed);
+      var windArray = getWindStats(data.current.wind_dir, data.current.wind_mph);
       windArray[0].appendTo($("#ws_wind_icon"));
       windArray[1].appendTo($("#ws_wind_stats"));
-
-      //data.sys.sunrise;
-      date = new Date(data.sys.sunrise*1000);
-      timeString = (date.getHours() % 12) + ":";
-      timeString += date.getMinutes() ? date.getMinutes() : '00';
-      if (date.getHours() < 12) { timeString += " AM"; }
-      else { timeString += " PM" }
-      $("#ws_sunrise_time").text(timeString);
-
-      //data.sys.sunset;
-      date = new Date(data.sys.sunset*1000);
-      timeString = (date.getHours() % 12) + ":";
-      timeString += date.getMinutes() ? date.getMinutes() : '00';
-      if (date.getHours() < 12) { timeString += " AM"; }
-      else { timeString += " PM" }
-      $("#ws_sunset_time").text(timeString);
     });
   }
 
+  function getWeather(lat, lon) {
 
-  function getWeather(location_data) {
-    var api_call = "http://api.openweathermap.org/data/2.5/weather?lat=" + location_data.lat + "&lon=" + location_data.lon + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
-    api_call = "http://api.openweathermap.org/data/2.5/forecast?lat=" + location_data.lat + "&lon=" + location_data.lon + "&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
-    api_call = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + location_data.lat + "&lon=" + location_data.lon + "&cnt=10&units=imperial&appid=de56df6669bbe24c6b94ad4ff0f8d3d7";
+    getCurrentWeather(lat, lon);
+    let apiCall = `https://api.apixu.com/v1/forecast.json?key=6dd018b75b9c4b698c2233231170406&q=${lat},${lon}&days=10`;
+    console.log(apiCall);
+    $.getJSON(apiCall, function(data) {
 
-    getCurrentWeather(location_data);
-    console.log("Api: " + api_call);
-    $.getJSON(api_call, function(data) {
+      console.log("Data");
+      console.log(data);
 
-      //console.log("Data");
-      //console.log(data);
-      //console.log("---------------------------------");
-
+      // in main panel
+      $("#ws_sunrise_time").text(data.forecast.forecastday[0].astro.sunrise);
+      $("#ws_sunset_time").text(data.forecast.forecastday[0].astro.sunset);
 
       var weather_table = $('<table class="weather_table">');
 
@@ -281,19 +287,15 @@ $(document).ready(function () {
       var weatherObj, date, stringDate, dayName, wind_cardinal_direction;
       var weather_row, cell, weather_icon, weather_desc;
       for (var i = 0; i < 10; i++) {
-        weatherObj = data.list[i];
+        weatherObj = data.forecast.forecastday[i];
 
         weather_row = $('<tr>');
         cell = $('<td>');
 
-        //dt:       1467230400
-        //GMT: Wed, 29 Jun 2016 20:00:00 GMT
-        //Your time zone: 6/29/2016, 1:00:00 PM GMT-7:00 DST
-        //offset:   25200 seconds offset (-7 GMT hours)
-        //subtract: 1467118800
         console.log(weatherObj);
-        date = new Date((weatherObj.dt)*1000); //*1000 because value takes in millisecionds, dt is epoch seconds.
-        //console.log("dt: " + weatherObj.dt);
+        date = new Date(weatherObj.date);
+        //date = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+
         //console.log("DATE: " + date);
         stringDate = convertUTCDateToLocalDate(date);
         //console.log("Date: " + stringDate);
@@ -306,8 +308,8 @@ $(document).ready(function () {
 
         cell = $('<td>');
         cell.addClass("highLows");
-        cell.html("<span class=\"hlf\"><span class=\"high\">" + Math.round(weatherObj.temp.max) + "</span><span class=\"slash\"></span><span class=\"low\">" + Math.round(weatherObj.temp.min) + "</span></span>");
-        cell.append("<span class=\"hlc\"><span class=\"high\">" + convertToCelsius(weatherObj.temp.max) + "</span><span class=\"slash\"></span><span class=\"low\">" + convertToCelsius(weatherObj.temp.min) + "</span></span>");
+        cell.html("<span class=\"hlf\"><span class=\"high\">" + Math.round(weatherObj.day.maxtemp_f) + "</span><span class=\"slash\"></span><span class=\"low\">" + Math.round(weatherObj.day.mintemp_f) + "</span></span>");
+        cell.append("<span class=\"hlc\"><span class=\"high\">" + Math.round(weatherObj.day.maxtemp_c) + "</span><span class=\"slash\"></span><span class=\"low\">" + Math.round(weatherObj.day.mintemp_c) + "</span></span>");
 
 
         cell.appendTo(weather_row);
@@ -315,22 +317,22 @@ $(document).ready(function () {
         cell = $('<td>');
         weather_icon = $('<i>');
         weather_icon.addClass("wi");
-        weather_icon.addClass("wi-owm-"+weatherObj.weather[0].id);
+        weather_icon.addClass("wi-owm-"+weatherObj.day.condition.code);
         weather_icon.appendTo(cell);
 
         weather_desc = $('<span>');
-        weather_desc.html(weatherObj.weather[0].description);
+        weather_desc.html(weatherObj.day.condition.text);
         weather_desc.appendTo(cell);
         cell.appendTo(weather_row);
 
         cell = $('<td>');
-        var windArray = getWindStats(weatherObj.deg, weatherObj.speed);
+        var windArray = getWindStats(weatherObj.hour[12].wind_dir, weatherObj.hour[12].wind_mph); //change it to same time of day?
         windArray[0].appendTo(cell);
         windArray[1].appendTo(cell);
         cell.appendTo(weather_row);
 
         cell = $('<td>');
-        cell.html(weatherObj.humidity + "%");
+        cell.html(weatherObj.day.avghumidity + "%");
         cell.appendTo(weather_row);
 
         $(weather_row).appendTo(weather_table);
@@ -363,10 +365,15 @@ $(document).ready(function () {
     });
   }
 
-  $.getJSON("http://ip-api.com/json", function(data) {
-    //console.log("Data lat: " + data.lat);
-    //console.log("Data lon: " + data.lon);
-    getWeather(data);
-  });
+
+  if ("geolocation" in navigator) {
+  /* geolocation is available */
+    navigator.geolocation.getCurrentPosition(function(position) {
+      getWeather(position.coords.latitude, position.coords.longitude);
+    });
+  } else {
+  /* geolocation IS NOT available */
+    console.log("Geolocation not available");
+  }
 
 });
