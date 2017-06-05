@@ -1,26 +1,13 @@
 $(document).ready(function () {
 
-  function getWindStatsBakcup(degrees, speed) {
-    var cardinalDirectionMap=["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-    var roundedDegree = Math.round((degrees/22.5)+.5);
-    var cardinalDirection = cardinalDirectionMap[roundedDegree % 16];
-    var cardinalDirectionIcon = $('<i>');
-    cardinalDirectionIcon.addClass("wi");
-    cardinalDirectionIcon.addClass("wi-wind");
-    cardinalDirectionIcon.addClass("wi-towards-" + cardinalDirection.toLowerCase());
-    cardinalDirectionIcon.attr('data-toggle', 'tooltip');
-    cardinalDirectionIcon.attr('title',cardinalDirection);
+  /*************************************************************************************************************/
+    
+  const DAY_NAMES   = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-    var spanIcon = $('<span>');
-    spanIcon.addClass("wind-icon");
-    cardinalDirectionIcon.prependTo(spanIcon);
 
-    var spanStats = $('<span>');
-    spanStats.addClass("wind-stats");
-    spanStats.text(speed + " MPH");
 
-    return [spanIcon, spanStats];
-  }
+  /*************************************************************************************************************/
 
   function getWindStats(direction, speed) {
     var cardinalDirectionIcon = $('<i>');
@@ -110,6 +97,126 @@ $(document).ready(function () {
     return head;
   }
 
+  const displayCurrentLocation = (location) => {
+    $("#ws_location").text(`${location.name}, ${location.region} `);
+  }
+
+  /* Displays most recent update time to weather */
+  const displayTime = (epochtime) => {
+      let date = new Date(epochtime*1000); // javascript uses milliseconds, UNIX timestamps in seconds
+      let timeString;
+      if (date.getHours() < 12) timeString = pad(date.getHours()) + ":" + pad(date.getMinutes()) + " AM";
+      else                      timeString = pad(date.getHours()-12) + ":" + pad(date.getMinutes()) + " PM";
+      $("#ws_datetime").text(DAY_NAMES[date.getDay()] + " " + timeString);
+  }
+
+  const displayCurrentWeatherDescription = (weatherDesc) => {
+    $("#wsd").text(weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1));
+  }
+
+  const displayCurrentWeatherIcon = (code) => {
+    let wsIcon =  $('<i>');
+    wsIcon.attr('id', 'ws_icon');
+    wsIcon.addClass('wi');
+    wsIcon.addClass("wi-owm-" + code); //TODO need to convert
+    wsIcon.appendTo("#ws_details");
+  }
+
+  const displayHumidity = (humidity, detailsTable) => {
+
+    let row = $('<tr>');
+    let cell = $('<td>');
+    cell.text('Humidity');
+    cell.appendTo(row);
+    cell = $('<td>');
+    cell.attr('id', 'ws_humidity');
+    cell.text(humidity + "%");
+    cell.appendTo(row);
+    row.appendTo(detailsTable);
+  }
+
+  const displayWindStats = (windDir, windSpeed, detailsTable) => {
+    let windArray = getWindStats(windDir, windSpeed);
+
+    row = $('<tr>');
+    cell = $('<td>');
+    cell.text('Wind');
+    cell.appendTo(row);
+    cell = $('<td>');
+    var span = $('<span>');
+    span.attr('id', 'ws_wind_icon');
+    windArray[0].appendTo(span);
+
+    span.appendTo(cell);
+    span = $('<span>');
+    span.attr('id', 'ws_wind_stats');
+    span.appendTo(cell);
+    cell.appendTo(row);
+    row.appendTo(detailsTable);
+    windArray[1].appendTo(span);
+  }
+
+  const displaySunriseAndSunset = (detailsTable) => {
+      row = $('<tr>');
+      cell = $('<td>');
+      let sunIcon = $('<i>');
+      sunIcon.addClass('wi');
+      sunIcon.addClass('wi-sunrise');
+      sunIcon.attr('data-toggle', 'tooltip');
+      sunIcon.attr('data-original-title', 'Sunrise');
+      let sunTime = $('<span>');
+      sunTime.attr('id','ws_sunrise_time');
+
+      sunIcon.appendTo(cell);
+      sunTime.appendTo(cell);
+      cell.appendTo(row);
+
+      cell = $('<td>');
+      sunIcon = $('<i>');
+      sunIcon.addClass('wi');
+      sunIcon.addClass('wi-sunset');
+      sunIcon.attr('data-toggle', 'tooltip');
+      sunIcon.attr('data-original-title', 'Sunset');
+
+      sunTime = $('<span>');
+      sunTime.attr('id','ws_sunset_time');
+
+      sunIcon.appendTo(cell);
+      sunTime.appendTo(cell);
+      cell.appendTo(row);
+      row.appendTo(detailsTable);
+  }
+
+  const createTemperatureToggle = () => {
+    let outerDiv = $('<div>');
+
+    let tempInF = $('<div>');
+    tempInF.attr('id', 'ws_temp_f');
+    tempInF.appendTo(outerDiv);
+
+    let tempInC = $('<div>');
+    tempInC.attr('id', 'ws_temp_c');
+    tempInC.appendTo(outerDiv);
+
+    let currentUnit = $('<div>');
+    currentUnit.attr('id', 'ws_temp_unit');
+
+    let fToggle = $('<span>');
+    fToggle.attr('id','ws_temp_f_toggle');
+    fToggle.html('&deg;F');
+
+    let cToggle = $('<span>');
+    cToggle.attr('id','ws_temp_c_toggle');
+    cToggle.html('&deg;C');
+
+    currentUnit.html('&nbsp;&nbsp;|&nbsp;&nbsp;');
+
+    fToggle.prependTo(currentUnit);
+    cToggle.appendTo(currentUnit);
+
+    currentUnit.appendTo(outerDiv);
+    outerDiv.appendTo("#ws_details");
+  }
 
   //NEED a way to get current temperature
   function getCurrentWeather(lat, lon) {
@@ -125,117 +232,25 @@ $(document).ready(function () {
       */
 
       // Error format: {"error":{"code":1005,"message":"API URL is invalid."}}
-
       if (data.hasOwnProperty("error")) {
         console.log(`Error: ${data.error.code}: ${data.error.message}`);
         $("#ws_details").html(`<div><strong>Current weather data unavailable for location: ${data.error.code}: ${data.error.message} </strong></div>`);
         return;
       }
-      
-      $("#ws_location").text(`${data.location.name}, ${data.location.region} `);
-
-      var currentTemp = data.current.temp_f;
-      var currentHumidity = data.current.humidity;
-      var weatherIconId = data.current.condition.code;
-
-      //console.log(data.location.localtime_epoch*1000);
-      date = new Date(data.location.localtime_epoch*1000);
-      var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-      var timeString;
-      if (date.getHours() < 12) {
-        timeString = date.getHours() + ":" + pad(date.getMinutes()) + " AM";
-      } else {
-        timeString = date.getHours()-12 + ":" + pad(date.getMinutes()) + " PM";
-      }
-      $("#ws_datetime").text(days[date.getDay()] + " " + timeString);
-
-      var weatherDesc = data.current.condition.text;
-      $("#wsd").text(weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1));
-
-      var wsIcon =  $('<i>');
-      wsIcon.attr('id', 'ws_icon');
-      wsIcon.addClass('wi');
-      wsIcon.addClass("wi-owm-" + weatherIconId); //TODO need to convert
-      wsIcon.appendTo("#ws_details");
-
-      var outerDiv = $('<div>');
-      var tempInF = $('<div>');
-      tempInF.attr('id', 'ws_temp_f');
-      tempInF.appendTo(outerDiv);
-      var tempInC = $('<div>');
-      tempInC.attr('id', 'ws_temp_c');
-      tempInC.appendTo(outerDiv);
-      var currentUnit = $('<div>');
-      currentUnit.attr('id', 'ws_temp_unit');
-      var fToggle = $('<span>');
-      fToggle.attr('id','ws_temp_f_toggle');
-      fToggle.html('&deg;F');
-      var cToggle = $('<span>');
-      cToggle.attr('id','ws_temp_c_toggle');
-      cToggle.html('&deg;C');
-      currentUnit.html('&nbsp;&nbsp;|&nbsp;&nbsp;');
-      fToggle.prependTo(currentUnit);
-      cToggle.appendTo(currentUnit);
-      currentUnit.appendTo(outerDiv);
-      outerDiv.appendTo("#ws_details");
+      displayCurrentLocation(data.location); // City, Region
+      displayTime(data.location.localtime_epoch); // Day of week, Time
+      displayCurrentWeatherDescription(data.current.condition.text); // Text description of weather
+      displayCurrentWeatherIcon(data.current.condition.code); // Display weather icon
+      createTemperatureToggle(); // Create C | F section to toggle weather measurement.
 
       var detailsDiv = $('<div>');
       detailsDiv.attr('id', 'ws_misc_details');
       var detailsTable = $('<table>');
-      var row = $('<tr>');
-      var cell = $('<td>');
-      cell.text('Humidity');
-      cell.appendTo(row);
-      cell = $('<td>');
-      cell.attr('id', 'ws_humidity');
-      cell.appendTo(row);
-      row.appendTo(detailsTable);
 
-      row = $('<tr>');
-      cell = $('<td>');
-      cell.text('Wind');
-      cell.appendTo(row);
-      cell = $('<td>');
-      var span = $('<span>');
-      span.attr('id', 'ws_wind_icon');
-      span.appendTo(cell);
-      span = $('<span>');
-      span.attr('id', 'ws_wind_stats');
-      span.appendTo(cell);
-      cell.appendTo(row);
-      row.appendTo(detailsTable);
+      displayHumidity(data.current.humidity, detailsTable);
+      displayWindStats(data.current.wind_dir, data.current.wind_mph, detailsTable);
+      displaySunriseAndSunset(detailsTable);
 
-      row = $('<tr>');
-      cell = $('<td>');
-
-      var sunIcon = $('<i>');
-      sunIcon.addClass('wi');
-      sunIcon.addClass('wi-sunrise');
-      sunIcon.attr('data-toggle', 'tooltip');
-      sunIcon.attr('data-original-title', 'Sunrise');
-
-      var sunTime = $('<span>');
-      sunTime.attr('id','ws_sunrise_time');
-
-      sunIcon.appendTo(cell);
-      sunTime.appendTo(cell);
-      cell.appendTo(row);
-
-      cell = $('<td>');
-      var sunIcon = $('<i>');
-      sunIcon.addClass('wi');
-      sunIcon.addClass('wi-sunset');
-      sunIcon.attr('data-toggle', 'tooltip');
-      sunIcon.attr('data-original-title', 'Sunset');
-
-      var sunTime = $('<span>');
-      sunTime.attr('id','ws_sunset_time');
-
-      sunIcon.appendTo(cell);
-      sunTime.appendTo(cell);
-      cell.appendTo(row);
-      row.appendTo(detailsTable);
       detailsTable.appendTo(detailsDiv);
       detailsDiv.appendTo("#ws_details");
 
@@ -257,17 +272,11 @@ $(document).ready(function () {
         $("#ws_temp_c_toggle").css('font-weight', 'bold');
       });
 
-      $("#ws_humidity").text(data.current.humidity + "%");
-
-      var windArray = getWindStats(data.current.wind_dir, data.current.wind_mph);
-      windArray[0].appendTo($("#ws_wind_icon"));
-      windArray[1].appendTo($("#ws_wind_stats"));
     });
   }
 
-  function getWeather(lat, lon) {
+  function getForecast(lat, lon) {
 
-    getCurrentWeather(lat, lon);
     let apiCall = `https://api.apixu.com/v1/forecast.json?key=6dd018b75b9c4b698c2233231170406&q=${lat},${lon}&days=10`;
     console.log(apiCall);
     $.getJSON(apiCall, function(data) {
@@ -367,12 +376,11 @@ $(document).ready(function () {
 
 
   if ("geolocation" in navigator) {
-  /* geolocation is available */
-    navigator.geolocation.getCurrentPosition(function(position) {
-      getWeather(position.coords.latitude, position.coords.longitude);
+    navigator.geolocation.getCurrentPosition((position) => {
+      getCurrentWeather(position.coords.latitude, position.coords.longitude);
+      getForecast(position.coords.latitude, position.coords.longitude);
     });
   } else {
-  /* geolocation IS NOT available */
     console.log("Geolocation not available");
   }
 
