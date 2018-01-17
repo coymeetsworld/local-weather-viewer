@@ -87,8 +87,6 @@ $(document).ready(function () {
     header.html("Description");
     header.appendTo(row);
     header = $("<th>");
-    header.html("Wind");
-    header.appendTo(row);
     header = $("<th>");
     header.html("Humidity");
     header.appendTo(row);
@@ -342,6 +340,13 @@ $(document).ready(function () {
       displayWindStats(data.current.wind_dir, data.current.wind_mph, detailsTable);
       displaySunriseAndSunset(detailsTable);
 
+      /*
+        Moving here, as getForecast relies on displaySunriseAndSunset to render.
+        i.e., adding the elements with id #ws-sunrise-time and #ws-sunset-time
+        there were situations where the sunrise/sunset icons showed up, but not the date.
+      */
+      getForecast(lat, lon);
+
       detailsTable.appendTo(detailsDiv);
       detailsDiv.appendTo("#ws-details");
 
@@ -349,7 +354,6 @@ $(document).ready(function () {
       $("#ws-temp-c").text(Math.round(data.current.temp_c));
 
       $("#ws-temp-f-toggle").click(function() {
-        console.log("F click");
         $("#ws-temp-c").css('display','none');
         $("#ws-temp-f").css('display','inline');
         $("#ws-temp-f-toggle").css('font-weight', 'bold');
@@ -395,13 +399,6 @@ $(document).ready(function () {
     return descCol;
   }
 
-  const createWindCol = (hourData) => {
-    let windCol = $("<td>");
-    let windArray = getWindStats(hourData.wind_dir, hourData.wind_mph); //change it to same time of day?
-    windArray[0].appendTo(windCol);
-    windArray[1].appendTo(windCol);
-    return windCol;
-  }
 
   const createHumidityCol = (humidity) => {
     let humidityCell = $('<td>');
@@ -410,12 +407,10 @@ $(document).ready(function () {
   }
 
   const createWeatherRow = (forecastData) => {
-    console.log(forecastData.day.condition);
     let weatherRow = $("<tr>");
     $(createDateCol(forecastData.date)).appendTo(weatherRow);
     $(createHighLowCol(forecastData.day)).appendTo(weatherRow);
     $(createDescriptionCol(forecastData.day.condition)).appendTo(weatherRow);
-    $(createWindCol(forecastData.hour[12])).appendTo(weatherRow);
     $(createHumidityCol(forecastData.day.avghumidity)).appendTo(weatherRow);
     return weatherRow;
 
@@ -472,7 +467,6 @@ $(document).ready(function () {
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition((position) => {
       getCurrentWeather(position.coords.latitude, position.coords.longitude);
-      getForecast(position.coords.latitude, position.coords.longitude);
     });
   } else {
     console.log("Geolocation not available");

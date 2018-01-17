@@ -244,12 +244,14 @@ body {
 
 /* sprinkle, showers, rain-mix, mist */
 .wi-owm-300,
-.wi-owm-301 {
+.wi-owm-301,
+.wi-owm-701 {
   color: LightSkyBlue;
 }
 
 /* heavier rain, cold */
 .wi-owm-302,
+.wi-owm-500,
 .wi-owm-501,
 .wi-owm-502,
 .wi-owm-520,
